@@ -30,8 +30,9 @@ defmodule Alpa.MarketData.Trades do
   @spec get(String.t(), keyword()) :: {:ok, [Trade.t()]} | {:error, Alpa.Error.t()}
   def get(symbol, opts \\ []) do
     params = build_params(opts)
+    encoded_symbol = URI.encode_www_form(symbol)
 
-    case Client.get_data("/v2/stocks/#{symbol}/trades", Keyword.put(opts, :params, params)) do
+    case Client.get_data("/v2/stocks/#{encoded_symbol}/trades", Keyword.put(opts, :params, params)) do
       {:ok, data} -> {:ok, parse_trades(data, symbol)}
       {:error, _} = error -> error
     end
@@ -89,7 +90,9 @@ defmodule Alpa.MarketData.Trades do
       |> Enum.reject(fn {_, v} -> is_nil(v) end)
       |> Map.new()
 
-    case Client.get_data("/v2/stocks/#{symbol}/trades/latest", Keyword.put(opts, :params, params)) do
+    encoded_symbol = URI.encode_www_form(symbol)
+
+    case Client.get_data("/v2/stocks/#{encoded_symbol}/trades/latest", Keyword.put(opts, :params, params)) do
       {:ok, %{"trade" => trade}} -> {:ok, Trade.from_map(trade, symbol)}
       {:error, _} = error -> error
     end

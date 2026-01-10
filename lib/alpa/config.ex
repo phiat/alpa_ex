@@ -23,8 +23,8 @@ defmodule Alpa.Config do
   ## Priority (highest to lowest)
 
   1. Options passed directly to functions
-  2. Application config
-  3. Environment variables
+  2. Environment variables
+  3. Application config
   """
 
   @type t :: %__MODULE__{
@@ -99,14 +99,36 @@ defmodule Alpa.Config do
 
   defp get_opt(opts, key, default \\ nil) do
     case Keyword.fetch(opts, key) do
-      {:ok, value} -> value
+      {:ok, value} ->
+        value
+
       :error ->
-        case Application.get_env(:alpa, key) do
-          nil -> default
-          value -> value
+        # Check environment variables first, then application config
+        case get_from_env(key) do
+          nil ->
+            case Application.get_env(:alpa, key) do
+              nil -> default
+              value -> value
+            end
+
+          value ->
+            value
         end
     end
   end
+
+  defp get_from_env(:api_key), do: System.get_env("APCA_API_KEY_ID")
+  defp get_from_env(:api_secret), do: System.get_env("APCA_API_SECRET_KEY")
+
+  defp get_from_env(:use_paper) do
+    case System.get_env("APCA_USE_PAPER") do
+      "false" -> false
+      "true" -> true
+      _ -> nil
+    end
+  end
+
+  defp get_from_env(_), do: nil
 
   defp get_trading_url(opts) do
     use_paper = get_opt(opts, :use_paper, true)

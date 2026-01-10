@@ -103,7 +103,8 @@ defmodule Alpa.Models.Order do
 
   defp parse_decimal(nil), do: nil
   defp parse_decimal(value) when is_binary(value), do: Decimal.new(value)
-  defp parse_decimal(value) when is_number(value), do: Decimal.from_float(value / 1)
+  defp parse_decimal(value) when is_integer(value), do: Decimal.new(value)
+  defp parse_decimal(value) when is_float(value), do: Decimal.from_float(value)
 
   defp parse_datetime(nil), do: nil
 
@@ -142,12 +143,28 @@ defmodule Alpa.Models.Order do
   defp parse_order_class(_), do: :simple
 
   defp parse_status(nil), do: nil
-  defp parse_status(status) when is_binary(status) do
-    status
-    |> String.downcase()
-    |> String.to_existing_atom()
-  rescue
-    _ -> nil
+  defp parse_status("new"), do: :new
+  defp parse_status("partially_filled"), do: :partially_filled
+  defp parse_status("filled"), do: :filled
+  defp parse_status("done_for_day"), do: :done_for_day
+  defp parse_status("canceled"), do: :canceled
+  defp parse_status("expired"), do: :expired
+  defp parse_status("replaced"), do: :replaced
+  defp parse_status("pending_cancel"), do: :pending_cancel
+  defp parse_status("pending_replace"), do: :pending_replace
+  defp parse_status("pending_new"), do: :pending_new
+  defp parse_status("accepted"), do: :accepted
+  defp parse_status("accepted_for_bidding"), do: :accepted_for_bidding
+  defp parse_status("stopped"), do: :stopped
+  defp parse_status("rejected"), do: :rejected
+  defp parse_status("suspended"), do: :suspended
+  defp parse_status("calculated"), do: :calculated
+  defp parse_status("held"), do: :held
+
+  defp parse_status(other) when is_binary(other) do
+    require Logger
+    Logger.warning("[Alpa.Models.Order] Unknown order status: #{inspect(other)}")
+    nil
   end
 
   defp parse_legs(nil), do: nil

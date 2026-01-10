@@ -138,6 +138,11 @@ defmodule Alpa.Stream.TradeUpdates do
   end
 
   @impl WebSockex
+  def handle_info(:reconnect, state) do
+    {:reconnect, state}
+  end
+
+  @impl WebSockex
   def handle_frame({:text, msg}, state) do
     case Jason.decode(msg) do
       {:ok, %{"stream" => "authorization", "data" => %{"status" => "authorized"}}} ->
@@ -186,9 +191,9 @@ defmodule Alpa.Stream.TradeUpdates do
   @impl WebSockex
   def handle_disconnect(%{reason: reason}, state) do
     Logger.warning("[TradeUpdates] Disconnected: #{inspect(reason)}")
-    # Attempt to reconnect after 5 seconds
-    Process.sleep(5000)
-    {:reconnect, state}
+    # Schedule non-blocking reconnect after 5 seconds
+    Process.send_after(self(), :reconnect, 5000)
+    {:ok, %{state | authenticated: false}}
   end
 
   @impl WebSockex
@@ -243,5 +248,6 @@ defmodule Alpa.Stream.TradeUpdates do
 
   defp parse_decimal(nil), do: nil
   defp parse_decimal(value) when is_binary(value), do: Decimal.new(value)
-  defp parse_decimal(value) when is_number(value), do: Decimal.from_float(value / 1)
+  defp parse_decimal(value) when is_integer(value), do: Decimal.new(value)
+  defp parse_decimal(value) when is_float(value), do: Decimal.from_float(value)
 end

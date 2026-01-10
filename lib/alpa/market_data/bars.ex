@@ -32,8 +32,9 @@ defmodule Alpa.MarketData.Bars do
   @spec get(String.t(), keyword()) :: {:ok, [Bar.t()]} | {:error, Alpa.Error.t()}
   def get(symbol, opts \\ []) do
     params = build_params(opts)
+    encoded_symbol = URI.encode_www_form(symbol)
 
-    case Client.get_data("/v2/stocks/#{symbol}/bars", Keyword.put(opts, :params, params)) do
+    case Client.get_data("/v2/stocks/#{encoded_symbol}/bars", Keyword.put(opts, :params, params)) do
       {:ok, data} -> {:ok, parse_bars(data, symbol)}
       {:error, _} = error -> error
     end
@@ -90,7 +91,9 @@ defmodule Alpa.MarketData.Bars do
       |> Enum.reject(fn {_, v} -> is_nil(v) end)
       |> Map.new()
 
-    case Client.get_data("/v2/stocks/#{symbol}/bars/latest", Keyword.put(opts, :params, params)) do
+    encoded_symbol = URI.encode_www_form(symbol)
+
+    case Client.get_data("/v2/stocks/#{encoded_symbol}/bars/latest", Keyword.put(opts, :params, params)) do
       {:ok, %{"bar" => bar}} -> {:ok, Bar.from_map(bar, symbol)}
       {:error, _} = error -> error
     end

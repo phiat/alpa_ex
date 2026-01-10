@@ -159,6 +159,30 @@ defmodule Alpa.Stream.MarketData do
   end
 
   @impl WebSockex
+  def handle_info(:reconnect, state) do
+    {:reconnect, state}
+  end
+
+  @impl WebSockex
+  def handle_info(:resubscribe, state) do
+    if state.authenticated and has_subscriptions?(state.subscriptions) do
+      msg =
+        Jason.encode!(%{
+          action: "subscribe",
+          trades: state.subscriptions.trades,
+          quotes: state.subscriptions.quotes,
+          bars: state.subscriptions.bars
+        })
+
+      {:reply, {:text, msg}, state}
+    else
+      # Not authenticated yet, try again in 1 second
+      Process.send_after(self(), :resubscribe, 1000)
+      {:ok, state}
+    end
+  end
+
+  @impl WebSockex
   def handle_frame({:text, msg}, state) do
     case Jason.decode(msg) do
       {:ok, messages} when is_list(messages) ->
@@ -222,9 +246,9 @@ defmodule Alpa.Stream.MarketData do
   @impl WebSockex
   def handle_disconnect(%{reason: reason}, state) do
     Logger.warning("[MarketData] Disconnected: #{inspect(reason)}")
-    # Attempt to reconnect after 5 seconds
-    Process.sleep(5000)
-    {:reconnect, %{state | authenticated: false}}
+    # Schedule non-blocking reconnect after 5 seconds
+    Process.send_after(self(), :reconnect, 5000)
+    {:ok, %{state | authenticated: false}}
   end
 
   @impl WebSockex

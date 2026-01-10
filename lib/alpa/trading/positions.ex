@@ -34,7 +34,9 @@ defmodule Alpa.Trading.Positions do
   """
   @spec get(String.t(), keyword()) :: {:ok, Position.t()} | {:error, Alpa.Error.t()}
   def get(symbol_or_asset_id, opts \\ []) do
-    case Client.get("/v2/positions/#{symbol_or_asset_id}", opts) do
+    encoded_symbol = URI.encode_www_form(symbol_or_asset_id)
+
+    case Client.get("/v2/positions/#{encoded_symbol}", opts) do
       {:ok, data} -> {:ok, Position.from_map(data)}
       {:error, _} = error -> error
     end
@@ -67,21 +69,17 @@ defmodule Alpa.Trading.Positions do
   """
   @spec close(String.t(), keyword()) :: {:ok, Alpa.Models.Order.t()} | {:error, Alpa.Error.t()}
   def close(symbol_or_asset_id, opts \\ []) do
+    encoded_symbol = URI.encode_www_form(symbol_or_asset_id)
+
     params =
       opts
       |> Keyword.take([:qty, :percentage])
       |> Enum.reject(fn {_, v} -> is_nil(v) end)
       |> Map.new()
 
-    url =
-      if map_size(params) > 0 do
-        query = URI.encode_query(params)
-        "/v2/positions/#{symbol_or_asset_id}?#{query}"
-      else
-        "/v2/positions/#{symbol_or_asset_id}"
-      end
+    opts = if map_size(params) > 0, do: Keyword.put(opts, :params, params), else: opts
 
-    case Client.delete(url, opts) do
+    case Client.delete("/v2/positions/#{encoded_symbol}", opts) do
       {:ok, data} when is_map(data) -> {:ok, Alpa.Models.Order.from_map(data)}
       {:ok, :deleted} -> {:ok, :deleted}
       {:error, _} = error -> error
@@ -109,13 +107,8 @@ defmodule Alpa.Trading.Positions do
         _ -> %{}
       end
 
-    url =
-      if map_size(params) > 0 do
-        "/v2/positions?" <> URI.encode_query(params)
-      else
-        "/v2/positions"
-      end
+    opts = if map_size(params) > 0, do: Keyword.put(opts, :params, params), else: opts
 
-    Client.delete(url, opts)
+    Client.delete("/v2/positions", opts)
   end
 end

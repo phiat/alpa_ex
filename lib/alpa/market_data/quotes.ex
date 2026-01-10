@@ -30,8 +30,9 @@ defmodule Alpa.MarketData.Quotes do
   @spec get(String.t(), keyword()) :: {:ok, [Quote.t()]} | {:error, Alpa.Error.t()}
   def get(symbol, opts \\ []) do
     params = build_params(opts)
+    encoded_symbol = URI.encode_www_form(symbol)
 
-    case Client.get_data("/v2/stocks/#{symbol}/quotes", Keyword.put(opts, :params, params)) do
+    case Client.get_data("/v2/stocks/#{encoded_symbol}/quotes", Keyword.put(opts, :params, params)) do
       {:ok, data} -> {:ok, parse_quotes(data, symbol)}
       {:error, _} = error -> error
     end
@@ -89,7 +90,9 @@ defmodule Alpa.MarketData.Quotes do
       |> Enum.reject(fn {_, v} -> is_nil(v) end)
       |> Map.new()
 
-    case Client.get_data("/v2/stocks/#{symbol}/quotes/latest", Keyword.put(opts, :params, params)) do
+    encoded_symbol = URI.encode_www_form(symbol)
+
+    case Client.get_data("/v2/stocks/#{encoded_symbol}/quotes/latest", Keyword.put(opts, :params, params)) do
       {:ok, %{"quote" => quote}} -> {:ok, Quote.from_map(quote, symbol)}
       {:error, _} = error -> error
     end

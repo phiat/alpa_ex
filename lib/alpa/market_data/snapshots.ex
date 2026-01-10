@@ -41,7 +41,9 @@ defmodule Alpa.MarketData.Snapshots do
       |> Enum.reject(fn {_, v} -> is_nil(v) end)
       |> Map.new()
 
-    case Client.get_data("/v2/stocks/#{symbol}/snapshot", Keyword.put(opts, :params, params)) do
+    encoded_symbol = URI.encode_www_form(symbol)
+
+    case Client.get_data("/v2/stocks/#{encoded_symbol}/snapshot", Keyword.put(opts, :params, params)) do
       {:ok, data} -> {:ok, Snapshot.from_map(data, symbol)}
       {:error, _} = error -> error
     end
