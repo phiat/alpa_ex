@@ -3,7 +3,7 @@ import Config
 # Default configuration for Alpa
 # Override these in your application's config or via environment variables
 
-config :alpa,
+config :alpa_ex,
   # API endpoints
   trading_url: "https://api.alpaca.markets",
   paper_url: "https://paper-api.alpaca.markets",

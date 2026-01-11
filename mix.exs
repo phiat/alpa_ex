@@ -6,7 +6,7 @@ defmodule Alpa.MixProject do
 
   def project do
     [
-      app: :alpa,
+      app: :alpa_ex,
       version: @version,
       elixir: "~> 1.16",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -15,7 +15,7 @@ defmodule Alpa.MixProject do
       description: description(),
       package: package(),
       docs: docs(),
-      name: "Alpa",
+      name: "AlpaEx",
       source_url: @source_url,
       dialyzer: [plt_add_apps: [:mix]],
       test_coverage: [tool: ExCoveralls]

@@ -15,7 +15,7 @@ defmodule Alpa.Config do
 
   ## Application Config
 
-      config :alpa,
+      config :alpa_ex,
         api_key: "your-key",
         api_secret: "your-secret",
         use_paper: true
@@ -106,7 +106,7 @@ defmodule Alpa.Config do
         # Check environment variables first, then application config
         case get_from_env(key) do
           nil ->
-            case Application.get_env(:alpa, key) do
+            case Application.get_env(:alpa_ex, key) do
               nil -> default
               value -> value
             end
@@ -140,6 +140,6 @@ defmodule Alpa.Config do
   end
 
   defp paper_url do
-    Application.get_env(:alpa, :paper_url, "https://paper-api.alpaca.markets")
+    Application.get_env(:alpa_ex, :paper_url, "https://paper-api.alpaca.markets")
   end
 end
