@@ -1,8 +1,8 @@
 defmodule Alpa.Trading.PositionsTest do
   use ExUnit.Case, async: true
 
-  alias Alpa.Trading.Positions
   alias Alpa.Error
+  alias Alpa.Trading.Positions
 
   describe "list/1" do
     test "requires credentials" do

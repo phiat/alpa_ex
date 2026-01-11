@@ -1,8 +1,8 @@
 defmodule Alpa.MarketData.SnapshotsTest do
   use ExUnit.Case, async: true
 
-  alias Alpa.MarketData.Snapshots
   alias Alpa.Error
+  alias Alpa.MarketData.Snapshots
 
   describe "get/2" do
     test "requires credentials" do

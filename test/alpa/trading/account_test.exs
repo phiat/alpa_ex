@@ -1,8 +1,8 @@
 defmodule Alpa.Trading.AccountTest do
   use ExUnit.Case, async: true
 
-  alias Alpa.Trading.Account
   alias Alpa.Error
+  alias Alpa.Trading.Account
 
   describe "get/1" do
     test "requires credentials" do

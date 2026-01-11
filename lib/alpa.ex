@@ -53,8 +53,8 @@ defmodule Alpa do
   See `Alpa.Config` for details.
   """
 
-  alias Alpa.Trading.{Account, Orders, Positions, Assets, Watchlists, Market}
-  alias Alpa.MarketData.{Bars, Quotes, Trades, Snapshots}
+  alias Alpa.MarketData.{Bars, Quotes, Snapshots, Trades}
+  alias Alpa.Trading.{Account, Assets, Market, Orders, Positions, Watchlists}
 
   # ============================================================================
   # Account

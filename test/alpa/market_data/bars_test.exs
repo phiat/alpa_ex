@@ -1,8 +1,8 @@
 defmodule Alpa.MarketData.BarsTest do
   use ExUnit.Case, async: true
 
-  alias Alpa.MarketData.Bars
   alias Alpa.Error
+  alias Alpa.MarketData.Bars
 
   describe "get/2" do
     test "requires credentials" do

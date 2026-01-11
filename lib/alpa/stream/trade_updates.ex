@@ -39,6 +39,7 @@ defmodule Alpa.Stream.TradeUpdates do
   require Logger
 
   alias Alpa.Config
+  alias Alpa.Models.Order
 
   @paper_stream_url "wss://paper-api.alpaca.markets/stream"
   @live_stream_url "wss://api.alpaca.markets/stream"
@@ -234,7 +235,7 @@ defmodule Alpa.Stream.TradeUpdates do
   defp parse_order(nil), do: nil
 
   defp parse_order(order) do
-    Alpa.Models.Order.from_map(order)
+    Order.from_map(order)
   end
 
   defp parse_timestamp(nil), do: nil

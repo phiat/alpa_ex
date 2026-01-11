@@ -4,7 +4,7 @@ defmodule Alpa.Trading.Positions do
   """
 
   alias Alpa.Client
-  alias Alpa.Models.Position
+  alias Alpa.Models.{Order, Position}
 
   @doc """
   Get all open positions.
@@ -81,7 +81,7 @@ defmodule Alpa.Trading.Positions do
     opts = if map_size(params) > 0, do: Keyword.put(opts, :params, params), else: opts
 
     case Client.delete("/v2/positions/#{encoded_symbol}", opts) do
-      {:ok, data} when is_map(data) -> {:ok, Alpa.Models.Order.from_map(data)}
+      {:ok, data} when is_map(data) -> {:ok, Order.from_map(data)}
       {:ok, :deleted} -> {:ok, :deleted}
       {:error, _} = error -> error
     end

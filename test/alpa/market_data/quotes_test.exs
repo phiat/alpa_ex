@@ -1,8 +1,8 @@
 defmodule Alpa.MarketData.QuotesTest do
   use ExUnit.Case, async: true
 
-  alias Alpa.MarketData.Quotes
   alias Alpa.Error
+  alias Alpa.MarketData.Quotes
 
   describe "get/2" do
     test "requires credentials" do

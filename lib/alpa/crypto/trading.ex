@@ -18,7 +18,7 @@ defmodule Alpa.Crypto.Trading do
   """
 
   alias Alpa.Client
-  alias Alpa.Models.{Order, Position, Asset}
+  alias Alpa.Models.{Asset, Order, Position}
 
   @doc """
   Get all available crypto assets.
