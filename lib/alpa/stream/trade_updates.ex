@@ -76,9 +76,7 @@ defmodule Alpa.Stream.TradeUpdates do
     callback = Keyword.fetch!(opts, :callback)
     config = Config.new(opts)
 
-    unless Config.has_credentials?(config) do
-      {:error, :missing_credentials}
-    else
+    if Config.has_credentials?(config) do
       url = if config.use_paper, do: @paper_stream_url, else: @live_stream_url
 
       state = %__MODULE__{
@@ -94,6 +92,8 @@ defmodule Alpa.Stream.TradeUpdates do
         end
 
       WebSockex.start_link(url, __MODULE__, state, ws_opts)
+    else
+      {:error, :missing_credentials}
     end
   end
 

@@ -30,7 +30,9 @@ defmodule Alpa.Options.Contracts do
       {:ok, %{contracts: [%Alpa.Models.OptionContract{...}], next_page_token: nil}}
 
   """
-  @spec list(keyword()) :: {:ok, %{contracts: [OptionContract.t()], next_page_token: String.t() | nil}} | {:error, Alpa.Error.t()}
+  @spec list(keyword()) ::
+          {:ok, %{contracts: [OptionContract.t()], next_page_token: String.t() | nil}}
+          | {:error, Alpa.Error.t()}
   def list(opts \\ []) do
     params =
       opts
@@ -100,7 +102,9 @@ defmodule Alpa.Options.Contracts do
       {:ok, %{contracts: [...], next_page_token: nil}}
 
   """
-  @spec search(String.t(), keyword()) :: {:ok, %{contracts: [OptionContract.t()], next_page_token: String.t() | nil}} | {:error, Alpa.Error.t()}
+  @spec search(String.t(), keyword()) ::
+          {:ok, %{contracts: [OptionContract.t()], next_page_token: String.t() | nil}}
+          | {:error, Alpa.Error.t()}
   def search(underlying_symbol, opts \\ []) do
     opts = Keyword.put(opts, :underlying_symbols, [underlying_symbol])
 

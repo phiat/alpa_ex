@@ -98,22 +98,13 @@ defmodule Alpa.Config do
   # Private helpers
 
   defp get_opt(opts, key, default \\ nil) do
-    case Keyword.fetch(opts, key) do
-      {:ok, value} ->
-        value
-
-      :error ->
-        # Check environment variables first, then application config
-        case get_from_env(key) do
-          nil ->
-            case Application.get_env(:alpa_ex, key) do
-              nil -> default
-              value -> value
-            end
-
-          value ->
-            value
-        end
+    with :error <- Keyword.fetch(opts, key),
+         nil <- get_from_env(key),
+         nil <- Application.get_env(:alpa_ex, key) do
+      default
+    else
+      {:ok, value} -> value
+      value when not is_nil(value) -> value
     end
   end
 

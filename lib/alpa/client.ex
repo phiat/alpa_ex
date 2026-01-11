@@ -11,7 +11,7 @@ defmodule Alpa.Client do
 
   alias Alpa.{Config, Error}
 
-  @type response :: {:ok, map() | [map()]} | {:error, Error.t()}
+  @type response :: {:ok, map() | [map()] | :deleted} | {:error, Error.t()}
 
   @doc """
   Make a GET request to the trading API.
@@ -60,9 +60,7 @@ defmodule Alpa.Client do
   def request(method, api, path, body, opts) do
     config = Config.new(opts)
 
-    unless Config.has_credentials?(config) do
-      {:error, Error.missing_credentials()}
-    else
+    if Config.has_credentials?(config) do
       base_url = get_base_url(api, config)
       url = base_url <> path
 
@@ -98,6 +96,8 @@ defmodule Alpa.Client do
         {:error, exception} ->
           {:error, Error.network_error(exception)}
       end
+    else
+      {:error, Error.missing_credentials()}
     end
   end
 

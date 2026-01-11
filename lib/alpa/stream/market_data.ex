@@ -75,9 +75,7 @@ defmodule Alpa.Stream.MarketData do
     config = Config.new(opts)
     feed = Keyword.get(opts, :feed, "iex")
 
-    unless Config.has_credentials?(config) do
-      {:error, :missing_credentials}
-    else
+    if Config.has_credentials?(config) do
       url = if feed == "sip", do: @sip_stream_url, else: @iex_stream_url
 
       state = %__MODULE__{
@@ -94,6 +92,8 @@ defmodule Alpa.Stream.MarketData do
         end
 
       WebSockex.start_link(url, __MODULE__, state, ws_opts)
+    else
+      {:error, :missing_credentials}
     end
   end
 

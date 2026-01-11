@@ -52,15 +52,12 @@ defmodule Alpa.Trading.Watchlists do
   """
   @spec get_by_name(String.t(), keyword()) :: {:ok, Watchlist.t()} | {:error, Alpa.Error.t()}
   def get_by_name(name, opts \\ []) do
-    case list(opts) do
-      {:ok, watchlists} ->
-        case Enum.find(watchlists, fn w -> w.name == name end) do
-          nil -> {:error, Alpa.Error.from_response(404, %{"message" => "Watchlist '#{name}' not found"})}
-          watchlist -> {:ok, watchlist}
-        end
-
-      {:error, _} = error ->
-        error
+    with {:ok, watchlists} <- list(opts),
+         watchlist when not is_nil(watchlist) <- Enum.find(watchlists, &(&1.name == name)) do
+      {:ok, watchlist}
+    else
+      {:error, _} = error -> error
+      nil -> {:error, Alpa.Error.from_response(404, %{"message" => "Watchlist '#{name}' not found"})}
     end
   end
 
