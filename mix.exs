@@ -2,7 +2,7 @@ defmodule Alpa.MixProject do
   use Mix.Project
 
   @version "2.0.0-dev"
-  @source_url "https://github.com/phiat/alpa"
+  @source_url "https://github.com/phiat/alpa_ex"
 
   def project do
     [
