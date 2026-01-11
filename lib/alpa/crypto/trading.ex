@@ -50,7 +50,7 @@ defmodule Alpa.Crypto.Trading do
   """
   @spec asset(String.t(), keyword()) :: {:ok, Asset.t()} | {:error, Alpa.Error.t()}
   def asset(symbol, opts \\ []) do
-    case Client.get("/v2/assets/#{URI.encode(symbol)}", opts) do
+    case Client.get("/v2/assets/#{URI.encode_www_form(symbol)}", opts) do
       {:ok, data} -> {:ok, Asset.from_map(data)}
       {:error, _} = error -> error
     end
@@ -76,6 +76,9 @@ defmodule Alpa.Crypto.Trading do
 
         {:ok, crypto_positions}
 
+      {:ok, unexpected} ->
+        {:error, Alpa.Error.invalid_response(unexpected)}
+
       {:error, _} = error ->
         error
     end
@@ -92,7 +95,7 @@ defmodule Alpa.Crypto.Trading do
   """
   @spec position(String.t(), keyword()) :: {:ok, Position.t()} | {:error, Alpa.Error.t()}
   def position(symbol, opts \\ []) do
-    case Client.get("/v2/positions/#{URI.encode(symbol)}", opts) do
+    case Client.get("/v2/positions/#{URI.encode_www_form(symbol)}", opts) do
       {:ok, data} -> {:ok, Position.from_map(data)}
       {:error, _} = error -> error
     end

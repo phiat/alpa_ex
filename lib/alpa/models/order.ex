@@ -20,10 +20,12 @@ defmodule Alpa.Models.Order do
           | :pending_replace
           | :pending_new
           | :accepted
+          | :accepted_for_bidding
           | :stopped
           | :rejected
           | :suspended
           | :calculated
+          | :held
 
   typedstruct do
     field :id, String.t()

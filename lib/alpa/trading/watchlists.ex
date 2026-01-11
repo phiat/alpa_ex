@@ -19,6 +19,7 @@ defmodule Alpa.Trading.Watchlists do
   def list(opts \\ []) do
     case Client.get("/v2/watchlists", opts) do
       {:ok, data} when is_list(data) -> {:ok, Enum.map(data, &Watchlist.from_map/1)}
+      {:ok, unexpected} -> {:error, Alpa.Error.invalid_response(unexpected)}
       {:error, _} = error -> error
     end
   end
