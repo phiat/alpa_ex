@@ -421,6 +421,7 @@ defmodule Alpa.Crypto.MarketData do
     case Map.get(bars, symbol) do
       nil -> []
       bar_list when is_list(bar_list) -> Enum.map(bar_list, &Bar.from_map(&1, symbol))
+      bar when is_map(bar) -> [Bar.from_map(bar, symbol)]
     end
   end
 
@@ -431,6 +432,7 @@ defmodule Alpa.Crypto.MarketData do
     case Map.get(quotes, symbol) do
       nil -> []
       quote_list when is_list(quote_list) -> Enum.map(quote_list, &Quote.from_map(&1, symbol))
+      quote when is_map(quote) -> [Quote.from_map(quote, symbol)]
     end
   end
 
@@ -441,6 +443,7 @@ defmodule Alpa.Crypto.MarketData do
     case Map.get(trades, symbol) do
       nil -> []
       trade_list when is_list(trade_list) -> Enum.map(trade_list, &Trade.from_map(&1, symbol))
+      trade when is_map(trade) -> [Trade.from_map(trade, symbol)]
     end
   end
 

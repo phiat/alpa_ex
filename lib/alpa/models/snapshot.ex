@@ -40,6 +40,18 @@ defmodule Alpa.Models.Snapshot do
     end)
   end
 
+  def from_response(data) when is_map(data) do
+    # The multi-snapshot API returns data directly as %{"AAPL" => %{...}, ...}
+    # Check if the values look like snapshot data (have "latestTrade" key)
+    if Enum.any?(data, fn {_k, v} -> is_map(v) and Map.has_key?(v, "latestTrade") end) do
+      Map.new(data, fn {symbol, snap_data} ->
+        {symbol, from_map(snap_data, symbol)}
+      end)
+    else
+      data
+    end
+  end
+
   def from_response(data), do: data
 
   defp parse_trade(nil, _symbol), do: nil
