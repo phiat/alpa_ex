@@ -44,7 +44,11 @@ defmodule Alpa.Stream.TradeUpdates do
   @paper_stream_url "wss://paper-api.alpaca.markets/stream"
   @live_stream_url "wss://api.alpaca.markets/stream"
 
-  defstruct [:callback, :config, :authenticated]
+  @max_reconnect_delay 60_000
+  @base_reconnect_delay 1_000
+  @jitter_max 1_000
+
+  defstruct [:callback, :config, :authenticated, :connection_status, reconnect_attempts: 0]
 
   @type callback :: (map() -> any()) | {module(), atom(), list()}
 
@@ -83,7 +87,9 @@ defmodule Alpa.Stream.TradeUpdates do
       state = %__MODULE__{
         callback: callback,
         config: config,
-        authenticated: false
+        authenticated: false,
+        connection_status: :connecting,
+        reconnect_attempts: 0
       }
 
       ws_opts =
@@ -112,7 +118,7 @@ defmodule Alpa.Stream.TradeUpdates do
   def handle_connect(_conn, state) do
     Logger.debug("[TradeUpdates] Connected to WebSocket")
     send(self(), :authenticate)
-    {:ok, state}
+    {:ok, %{state | connection_status: :connecting}}
   end
 
   @impl WebSockex
@@ -140,7 +146,7 @@ defmodule Alpa.Stream.TradeUpdates do
 
   @impl WebSockex
   def handle_info(:reconnect, state) do
-    {:reconnect, state}
+    {:reconnect, %{state | connection_status: :connecting}}
   end
 
   @impl WebSockex
@@ -149,7 +155,7 @@ defmodule Alpa.Stream.TradeUpdates do
       {:ok, %{"stream" => "authorization", "data" => %{"status" => "authorized"}}} ->
         Logger.info("[TradeUpdates] Authenticated successfully")
         send(self(), :subscribe)
-        {:ok, %{state | authenticated: true}}
+        {:ok, %{state | authenticated: true, connection_status: :connected, reconnect_attempts: 0}}
 
       {:ok, %{"stream" => "authorization", "data" => %{"status" => status}}} ->
         Logger.error("[TradeUpdates] Authentication failed: #{status}")
@@ -192,9 +198,14 @@ defmodule Alpa.Stream.TradeUpdates do
   @impl WebSockex
   def handle_disconnect(%{reason: reason}, state) do
     Logger.warning("[TradeUpdates] Disconnected: #{inspect(reason)}")
-    # Schedule non-blocking reconnect after 5 seconds
-    Process.send_after(self(), :reconnect, 5000)
-    {:ok, %{state | authenticated: false}}
+
+    new_attempts = state.reconnect_attempts + 1
+    delay = reconnect_delay(new_attempts)
+
+    Logger.info("[TradeUpdates] Reconnecting in #{delay}ms (attempt #{new_attempts})")
+    Process.send_after(self(), :reconnect, delay)
+
+    {:ok, %{state | authenticated: false, connection_status: :disconnected, reconnect_attempts: new_attempts}}
   end
 
   @impl WebSockex
@@ -204,6 +215,12 @@ defmodule Alpa.Stream.TradeUpdates do
   end
 
   # Private helpers
+
+  defp reconnect_delay(attempts) do
+    base = min(@base_reconnect_delay * Integer.pow(2, attempts - 1), @max_reconnect_delay)
+    jitter = :rand.uniform(@jitter_max)
+    base + jitter
+  end
 
   defp handle_trade_update(data, state) do
     event = parse_trade_event(data)

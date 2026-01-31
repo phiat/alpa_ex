@@ -25,6 +25,7 @@ alpa-*.tar
 # Environment files with secrets
 .env
 .env.*
+!.env.example
 
 # ExVCR cassettes with API responses
 /test/fixture/vcr_cassettes/*secret*

@@ -7,9 +7,10 @@ lib/
 ├── alpa.ex                        # Main facade (delegates to submodules)
 ├── alpa/
 │   ├── application.ex             # OTP Application
-│   ├── client.ex                  # HTTP client (Req-based)
+│   ├── client.ex                  # HTTP client (Req-based) + telemetry
 │   ├── config.ex                  # Configuration management
 │   ├── error.ex                   # Error types and handling
+│   ├── pagination.ex              # Pagination helpers (all/2, stream/2)
 │   ├── trading/
 │   │   ├── account.ex             # Account, config, activities, history
 │   │   ├── orders.ex              # Order CRUD + helpers
@@ -29,14 +30,22 @@ lib/
 │   ├── options/
 │   │   └── contracts.ex           # Option contract search
 │   ├── crypto/
-│   │   └── trading.ex             # Crypto-specific helpers
+│   │   ├── trading.ex             # Crypto-specific trading helpers
+│   │   └── market_data.ex         # Crypto bars, quotes, trades, snapshots, orderbook
 │   └── models/
 │       ├── account.ex             # Account struct
+│       ├── account_config.ex      # Account configuration struct
+│       ├── activity.ex            # Activity struct (with Decimal)
 │       ├── asset.ex               # Asset struct
 │       ├── bar.ex                 # OHLCV bar struct
+│       ├── calendar.ex            # Market calendar day struct
 │       ├── clock.ex               # Market clock struct
+│       ├── corporate_action.ex    # Corporate action struct
+│       ├── crypto_transfer.ex     # Crypto transfer struct
+│       ├── crypto_wallet.ex       # Crypto wallet struct
 │       ├── option_contract.ex     # Option contract struct
 │       ├── order.ex               # Order struct
+│       ├── portfolio_history.ex   # Portfolio history struct
 │       ├── position.ex            # Position struct
 │       ├── quote.ex               # Quote struct
 │       ├── snapshot.ex            # Snapshot struct
@@ -60,10 +69,43 @@ lib/
 - Transient retry with exponential backoff
 - Configurable timeouts
 
+## Telemetry
+
+All API calls emit telemetry events via `:telemetry`:
+
+| Event | Measurements | Metadata |
+|-------|-------------|----------|
+| `[:alpa, :request, :start]` | `%{system_time: integer}` | `%{method, path, url}` |
+| `[:alpa, :request, :stop]` | `%{duration: integer}` | `%{method, path, url}` |
+| `[:alpa, :request, :exception]` | `%{duration: integer}` | `%{method, path, url, error}` |
+
+Attach handlers to monitor latency, error rates, or log requests:
+
+```elixir
+:telemetry.attach("alpa-logger", [:alpa, :request, :stop], fn _event, measurements, metadata, _config ->
+  Logger.info("#{metadata.method} #{metadata.path} took #{measurements.duration}ns")
+end, nil)
+```
+
+## Pagination
+
+`Alpa.Pagination` provides helpers for paginated endpoints:
+
+```elixir
+# Eagerly fetch all pages
+{:ok, all_orders} = Alpa.Pagination.all(&Alpa.Trading.Orders.list/1, limit: 100)
+
+# Lazy stream
+Alpa.Pagination.stream(&Alpa.Trading.Orders.list/1, limit: 50)
+|> Stream.take(200)
+|> Enum.to_list()
+```
+
 ## WebSocket Streaming
 
 `Alpa.Stream.TradeUpdates` and `Alpa.Stream.MarketData` use WebSockex for:
 - Authenticated WebSocket connections
 - Auto-subscribe after auth
 - Callback-based event handling (function or MFA tuple)
-- Automatic reconnection on disconnect
+- Exponential backoff reconnection with jitter (1s → 60s max)
+- Connection state tracking (`:connecting`, `:connected`, `:disconnected`)

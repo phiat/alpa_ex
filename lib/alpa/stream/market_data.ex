@@ -45,7 +45,11 @@ defmodule Alpa.Stream.MarketData do
   @iex_stream_url "wss://stream.data.alpaca.markets/v2/iex"
   @sip_stream_url "wss://stream.data.alpaca.markets/v2/sip"
 
-  defstruct [:callback, :config, :authenticated, :subscriptions]
+  @max_reconnect_delay 60_000
+  @base_reconnect_delay 1_000
+  @jitter_max 1_000
+
+  defstruct [:callback, :config, :authenticated, :subscriptions, :connection_status, reconnect_attempts: 0]
 
   @type callback :: (map() -> any()) | {module(), atom(), list()}
   @type subscription_type :: :trades | :quotes | :bars
@@ -82,7 +86,9 @@ defmodule Alpa.Stream.MarketData do
         callback: callback,
         config: config,
         authenticated: false,
-        subscriptions: %{trades: [], quotes: [], bars: []}
+        subscriptions: %{trades: [], quotes: [], bars: []},
+        connection_status: :connecting,
+        reconnect_attempts: 0
       }
 
       ws_opts =
@@ -143,7 +149,7 @@ defmodule Alpa.Stream.MarketData do
   def handle_connect(_conn, state) do
     Logger.debug("[MarketData] Connected to WebSocket")
     send(self(), :authenticate)
-    {:ok, state}
+    {:ok, %{state | connection_status: :connecting}}
   end
 
   @impl WebSockex
@@ -160,7 +166,7 @@ defmodule Alpa.Stream.MarketData do
 
   @impl WebSockex
   def handle_info(:reconnect, state) do
-    {:reconnect, state}
+    {:reconnect, %{state | connection_status: :connecting}}
   end
 
   @impl WebSockex
@@ -246,9 +252,14 @@ defmodule Alpa.Stream.MarketData do
   @impl WebSockex
   def handle_disconnect(%{reason: reason}, state) do
     Logger.warning("[MarketData] Disconnected: #{inspect(reason)}")
-    # Schedule non-blocking reconnect after 5 seconds
-    Process.send_after(self(), :reconnect, 5000)
-    {:ok, %{state | authenticated: false}}
+
+    new_attempts = state.reconnect_attempts + 1
+    delay = reconnect_delay(new_attempts)
+
+    Logger.info("[MarketData] Reconnecting in #{delay}ms (attempt #{new_attempts})")
+    Process.send_after(self(), :reconnect, delay)
+
+    {:ok, %{state | authenticated: false, connection_status: :disconnected, reconnect_attempts: new_attempts}}
   end
 
   @impl WebSockex
@@ -272,7 +283,7 @@ defmodule Alpa.Stream.MarketData do
       send(self(), :resubscribe)
     end
 
-    %{state | authenticated: true}
+    %{state | authenticated: true, connection_status: :connected, reconnect_attempts: 0}
   end
 
   defp handle_message(%{"T" => "error", "code" => code, "msg" => msg}, state) do
@@ -312,6 +323,12 @@ defmodule Alpa.Stream.MarketData do
   end
 
   # Private helpers
+
+  defp reconnect_delay(attempts) do
+    base = min(@base_reconnect_delay * Integer.pow(2, attempts - 1), @max_reconnect_delay)
+    jitter = :rand.uniform(@jitter_max)
+    base + jitter
+  end
 
   defp invoke_callback(event, state) do
     case state.callback do

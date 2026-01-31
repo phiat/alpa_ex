@@ -71,6 +71,41 @@ IO.puts("Buying power: $#{account.buying_power}")
 {:ok, snapshot} = Alpa.snapshot("AAPL")
 ```
 
+## Crypto Trading
+
+```elixir
+# Buy crypto
+{:ok, order} = Alpa.Crypto.Trading.buy("BTC/USD", notional: "100.00")
+
+# Get crypto market data
+{:ok, bars} = Alpa.Crypto.MarketData.get_bars("BTC/USD", timeframe: "1Hour")
+{:ok, snapshot} = Alpa.Crypto.MarketData.get_snapshots(["BTC/USD", "ETH/USD"])
+```
+
+## Pagination
+
+For endpoints that return paginated results:
+
+```elixir
+# Fetch all orders across pages
+{:ok, all_orders} = Alpa.Pagination.all(&Alpa.Trading.Orders.list/1, limit: 100)
+
+# Or use lazy streaming
+Alpa.Pagination.stream(&Alpa.Trading.Orders.list/1, limit: 50)
+|> Stream.filter(fn order -> order.status == "filled" end)
+|> Enum.to_list()
+```
+
+## Telemetry
+
+Monitor API calls with telemetry:
+
+```elixir
+:telemetry.attach("alpa-logger", [:alpa, :request, :stop], fn _event, measurements, metadata, _config ->
+  Logger.info("#{metadata.method} #{metadata.path} took #{div(measurements.duration, 1_000_000)}ms")
+end, nil)
+```
+
 ## Error Handling
 
 All functions return `{:ok, result}` or `{:error, %Alpa.Error{}}`:
@@ -82,4 +117,20 @@ case Alpa.account() do
   {:error, %Alpa.Error{type: :rate_limited}} -> IO.puts("Rate limited")
   {:error, error} -> IO.puts("Error: #{error}")
 end
+```
+
+## WebSocket Streaming
+
+```elixir
+# Stream trade updates
+{:ok, pid} = Alpa.Stream.TradeUpdates.start_link(
+  callback: fn event -> IO.inspect(event, label: "trade_update") end
+)
+
+# Stream market data
+{:ok, pid} = Alpa.Stream.MarketData.start_link(
+  feed: :iex,
+  trades: ["AAPL", "TSLA"],
+  callback: fn event -> IO.inspect(event) end
+)
 ```

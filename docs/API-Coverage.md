@@ -6,11 +6,11 @@
 |----------|--------|------|--------|--------|
 | **Account** | | | | |
 | Get Account | GET | `/v2/account` | `Alpa.Trading.Account` | Done |
-| Get Config | GET | `/v2/account/configurations` | `Alpa.Trading.Account` | Done |
+| Get Config | GET | `/v2/account/configurations` | `Alpa.Trading.Account` | Done (typed) |
 | Update Config | PATCH | `/v2/account/configurations` | `Alpa.Trading.Account` | Done |
-| Get Activities | GET | `/v2/account/activities` | `Alpa.Trading.Account` | Done |
-| Get Activities by Type | GET | `/v2/account/activities/{type}` | `Alpa.Trading.Account` | Done |
-| Portfolio History | GET | `/v2/account/portfolio/history` | `Alpa.Trading.Account` | Done |
+| Get Activities | GET | `/v2/account/activities` | `Alpa.Trading.Account` | Done (typed) |
+| Get Activities by Type | GET | `/v2/account/activities/{type}` | `Alpa.Trading.Account` | Done (typed) |
+| Portfolio History | GET | `/v2/account/portfolio/history` | `Alpa.Trading.Account` | Done (typed) |
 | **Orders** | | | | |
 | Create Order | POST | `/v2/orders` | `Alpa.Trading.Orders` | Done |
 | List Orders | GET | `/v2/orders` | `Alpa.Trading.Orders` | Done |
@@ -32,24 +32,31 @@
 | **Watchlists** | | | | |
 | Full CRUD | Various | `/v2/watchlists/*` | `Alpa.Trading.Watchlists` | Done |
 | **Market** | | | | |
-| Clock | GET | `/v2/clock` | `Alpa.Trading.Market` | Done |
-| Calendar | GET | `/v2/calendar` | `Alpa.Trading.Market` | Done |
+| Clock | GET | `/v2/clock` | `Alpa.Trading.Market` | Done (typed) |
+| Calendar | GET | `/v2/calendar` | `Alpa.Trading.Market` | Done (typed) |
 | **Corporate Actions** | | | | |
 | List Announcements | GET | `/v2/corporate_actions/announcements` | `Alpa.Trading.CorporateActions` | Done |
 | Get Announcement | GET | `/v2/corporate_actions/announcements/{id}` | `Alpa.Trading.CorporateActions` | Done |
-| **Market Data** | | | | |
+| **Market Data (Stocks)** | | | | |
 | Bars/Quotes/Trades | GET | `/v2/stocks/*` | `Alpa.MarketData.*` | Done |
 | Snapshots | GET | `/v2/stocks/snapshots` | `Alpa.MarketData.Snapshots` | Done |
+| **Crypto Market Data** | | | | |
+| Crypto Bars | GET | `/v1beta3/crypto/{loc}/bars` | `Alpa.Crypto.MarketData` | Done |
+| Crypto Quotes | GET | `/v1beta3/crypto/{loc}/quotes` | `Alpa.Crypto.MarketData` | Done |
+| Crypto Trades | GET | `/v1beta3/crypto/{loc}/trades` | `Alpa.Crypto.MarketData` | Done |
+| Crypto Snapshots | GET | `/v1beta3/crypto/{loc}/snapshots` | `Alpa.Crypto.MarketData` | Done |
+| Crypto Orderbook | GET | `/v1beta3/crypto/{loc}/orderbooks` | `Alpa.Crypto.MarketData` | Done |
 | **Streaming** | | | | |
 | Trade Updates | WSS | `/stream` | `Alpa.Stream.TradeUpdates` | Done |
 | Market Data | WSS | `/v2/{feed}` | `Alpa.Stream.MarketData` | Done |
-| **Crypto** | | | | |
+| **Crypto Trading** | | | | |
 | Crypto Trading | Various | `/v2/orders` | `Alpa.Crypto.Trading` | Done |
 
-## Planned
+## Cross-Cutting Features
 
-- Typed models for activities, portfolio history, calendar (#13)
-- Pagination helpers (#16)
-- Telemetry instrumentation (#17)
-- Crypto market data endpoints (#18)
-- WebSocket reconnection improvements (#19)
+| Feature | Module | Status |
+|---------|--------|--------|
+| Telemetry events (`[:alpa, :request, :start\|:stop\|:exception]`) | `Alpa.Client` | Done |
+| Pagination helpers (`all/2`, `stream/2`) | `Alpa.Pagination` | Done |
+| Typed models (AccountConfig, Activity, PortfolioHistory, Calendar) | `Alpa.Models.*` | Done |
+| Exponential backoff reconnection with jitter | `Alpa.Stream.*` | Done |
