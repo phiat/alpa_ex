@@ -66,7 +66,9 @@ defmodule Alpa.Trading.WatchlistsTest do
 
     test "handles invalid response" do
       MockClient.mock_get("/v2/watchlists", {:ok, %{"error" => "unexpected"}})
-      {:error, %Error{type: :invalid_response}} = Watchlists.list(api_key: "test", api_secret: "test")
+
+      {:error, %Error{type: :invalid_response}} =
+        Watchlists.list(api_key: "test", api_secret: "test")
     end
   end
 
@@ -90,8 +92,13 @@ defmodule Alpa.Trading.WatchlistsTest do
     end
 
     test "handles not found" do
-      MockClient.mock_get("/v2/watchlists/nonexistent", {:error, Error.from_response(404, %{"message" => "not found"})})
-      {:error, %Error{type: :not_found}} = Watchlists.get("nonexistent", api_key: "test", api_secret: "test")
+      MockClient.mock_get(
+        "/v2/watchlists/nonexistent",
+        {:error, Error.from_response(404, %{"message" => "not found"})}
+      )
+
+      {:error, %Error{type: :not_found}} =
+        Watchlists.get("nonexistent", api_key: "test", api_secret: "test")
     end
   end
 
@@ -104,12 +111,13 @@ defmodule Alpa.Trading.WatchlistsTest do
     test "creates a watchlist" do
       MockClient.mock_post("/v2/watchlists", {:ok, @watchlist_data})
 
-      {:ok, wl} = Watchlists.create(
-        name: "Tech Stocks",
-        symbols: ["AAPL", "MSFT"],
-        api_key: "test",
-        api_secret: "test"
-      )
+      {:ok, wl} =
+        Watchlists.create(
+          name: "Tech Stocks",
+          symbols: ["AAPL", "MSFT"],
+          api_key: "test",
+          api_secret: "test"
+        )
 
       assert %Watchlist{} = wl
       assert wl.name == "Tech Stocks"
@@ -119,11 +127,12 @@ defmodule Alpa.Trading.WatchlistsTest do
       empty_wl = %{@watchlist_data | "assets" => []}
       MockClient.mock_post("/v2/watchlists", {:ok, empty_wl})
 
-      {:ok, wl} = Watchlists.create(
-        name: "Empty Watchlist",
-        api_key: "test",
-        api_secret: "test"
-      )
+      {:ok, wl} =
+        Watchlists.create(
+          name: "Empty Watchlist",
+          api_key: "test",
+          api_secret: "test"
+        )
 
       assert %Watchlist{} = wl
       assert wl.assets == []
@@ -140,11 +149,12 @@ defmodule Alpa.Trading.WatchlistsTest do
       updated = %{@watchlist_data | "name" => "Renamed"}
       MockClient.mock_put("/v2/watchlists/wl-abc-123", {:ok, updated})
 
-      {:ok, wl} = Watchlists.update("wl-abc-123",
-        name: "Renamed",
-        api_key: "test",
-        api_secret: "test"
-      )
+      {:ok, wl} =
+        Watchlists.update("wl-abc-123",
+          name: "Renamed",
+          api_key: "test",
+          api_secret: "test"
+        )
 
       assert wl.name == "Renamed"
     end
@@ -159,7 +169,8 @@ defmodule Alpa.Trading.WatchlistsTest do
     test "deletes a watchlist" do
       MockClient.mock_delete("/v2/watchlists/wl-abc-123", {:ok, :deleted})
 
-      assert {:ok, :deleted} = Watchlists.delete("wl-abc-123", api_key: "test", api_secret: "test")
+      assert {:ok, :deleted} =
+               Watchlists.delete("wl-abc-123", api_key: "test", api_secret: "test")
     end
   end
 
@@ -170,9 +181,21 @@ defmodule Alpa.Trading.WatchlistsTest do
     end
 
     test "adds a symbol to a watchlist" do
-      updated = %{@watchlist_data | "assets" => @watchlist_data["assets"] ++ [
-        %{"id" => "asset-3", "class" => "us_equity", "symbol" => "NVDA", "status" => "active", "tradable" => true}
-      ]}
+      updated = %{
+        @watchlist_data
+        | "assets" =>
+            @watchlist_data["assets"] ++
+              [
+                %{
+                  "id" => "asset-3",
+                  "class" => "us_equity",
+                  "symbol" => "NVDA",
+                  "status" => "active",
+                  "tradable" => true
+                }
+              ]
+      }
+
       MockClient.mock_post("/v2/watchlists/wl-abc-123", {:ok, updated})
 
       {:ok, wl} = Watchlists.add_symbol("wl-abc-123", "NVDA", api_key: "test", api_secret: "test")
@@ -192,7 +215,8 @@ defmodule Alpa.Trading.WatchlistsTest do
       updated = %{@watchlist_data | "assets" => [Enum.at(@watchlist_data["assets"], 1)]}
       MockClient.mock_delete("/v2/watchlists/wl-abc-123/AAPL", {:ok, updated})
 
-      {:ok, wl} = Watchlists.remove_symbol("wl-abc-123", "AAPL", api_key: "test", api_secret: "test")
+      {:ok, wl} =
+        Watchlists.remove_symbol("wl-abc-123", "AAPL", api_key: "test", api_secret: "test")
 
       assert %Watchlist{} = wl
       assert length(wl.assets) == 1
@@ -201,7 +225,8 @@ defmodule Alpa.Trading.WatchlistsTest do
     test "removes a symbol from a watchlist (returns :deleted)" do
       MockClient.mock_delete("/v2/watchlists/wl-abc-123/AAPL", {:ok, :deleted})
 
-      {:ok, :deleted} = Watchlists.remove_symbol("wl-abc-123", "AAPL", api_key: "test", api_secret: "test")
+      {:ok, :deleted} =
+        Watchlists.remove_symbol("wl-abc-123", "AAPL", api_key: "test", api_secret: "test")
     end
   end
 
@@ -222,7 +247,8 @@ defmodule Alpa.Trading.WatchlistsTest do
     test "returns error when watchlist name not found" do
       MockClient.mock_get("/v2/watchlists", {:ok, [@watchlist_data]})
 
-      {:error, %Error{type: :not_found}} = Watchlists.get_by_name("Nonexistent", api_key: "test", api_secret: "test")
+      {:error, %Error{type: :not_found}} =
+        Watchlists.get_by_name("Nonexistent", api_key: "test", api_secret: "test")
     end
   end
 end

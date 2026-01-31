@@ -36,7 +36,9 @@ defmodule Alpa.Test.MockClient do
   """
   def mock_get(path, response) do
     :meck.expect(Alpa.Client, :get, fn p, _opts ->
-      if p == path, do: response, else: {:error, Alpa.Error.from_response(404, %{"message" => "Unexpected path: #{p}"})}
+      if p == path,
+        do: response,
+        else: {:error, Alpa.Error.from_response(404, %{"message" => "Unexpected path: #{p}"})}
     end)
   end
 
@@ -45,7 +47,9 @@ defmodule Alpa.Test.MockClient do
   """
   def mock_post(path, response) do
     :meck.expect(Alpa.Client, :post, fn p, _body, _opts ->
-      if p == path, do: response, else: {:error, Alpa.Error.from_response(404, %{"message" => "Unexpected path: #{p}"})}
+      if p == path,
+        do: response,
+        else: {:error, Alpa.Error.from_response(404, %{"message" => "Unexpected path: #{p}"})}
     end)
   end
 
@@ -54,7 +58,9 @@ defmodule Alpa.Test.MockClient do
   """
   def mock_put(path, response) do
     :meck.expect(Alpa.Client, :put, fn p, _body, _opts ->
-      if p == path, do: response, else: {:error, Alpa.Error.from_response(404, %{"message" => "Unexpected path: #{p}"})}
+      if p == path,
+        do: response,
+        else: {:error, Alpa.Error.from_response(404, %{"message" => "Unexpected path: #{p}"})}
     end)
   end
 
@@ -63,7 +69,9 @@ defmodule Alpa.Test.MockClient do
   """
   def mock_delete(path, response) do
     :meck.expect(Alpa.Client, :delete, fn p, _opts ->
-      if p == path, do: response, else: {:error, Alpa.Error.from_response(404, %{"message" => "Unexpected path: #{p}"})}
+      if p == path,
+        do: response,
+        else: {:error, Alpa.Error.from_response(404, %{"message" => "Unexpected path: #{p}"})}
     end)
   end
 
@@ -72,7 +80,9 @@ defmodule Alpa.Test.MockClient do
   """
   def mock_get_data(path, response) do
     :meck.expect(Alpa.Client, :get_data, fn p, _opts ->
-      if p == path, do: response, else: {:error, Alpa.Error.from_response(404, %{"message" => "Unexpected path: #{p}"})}
+      if p == path,
+        do: response,
+        else: {:error, Alpa.Error.from_response(404, %{"message" => "Unexpected path: #{p}"})}
     end)
   end
 end

@@ -19,30 +19,34 @@ defmodule Alpa.Trading.AssetsTest do
     end
 
     test "returns a list of assets" do
-      MockClient.mock_get("/v2/assets", {:ok, [
-        %{
-          "id" => "asset-1",
-          "class" => "us_equity",
-          "symbol" => "AAPL",
-          "name" => "Apple Inc.",
-          "exchange" => "NASDAQ",
-          "status" => "active",
-          "tradable" => true,
-          "marginable" => true,
-          "shortable" => true,
-          "easy_to_borrow" => true,
-          "fractionable" => true
-        },
-        %{
-          "id" => "asset-2",
-          "class" => "us_equity",
-          "symbol" => "MSFT",
-          "name" => "Microsoft Corp.",
-          "exchange" => "NASDAQ",
-          "status" => "active",
-          "tradable" => true
-        }
-      ]})
+      MockClient.mock_get(
+        "/v2/assets",
+        {:ok,
+         [
+           %{
+             "id" => "asset-1",
+             "class" => "us_equity",
+             "symbol" => "AAPL",
+             "name" => "Apple Inc.",
+             "exchange" => "NASDAQ",
+             "status" => "active",
+             "tradable" => true,
+             "marginable" => true,
+             "shortable" => true,
+             "easy_to_borrow" => true,
+             "fractionable" => true
+           },
+           %{
+             "id" => "asset-2",
+             "class" => "us_equity",
+             "symbol" => "MSFT",
+             "name" => "Microsoft Corp.",
+             "exchange" => "NASDAQ",
+             "status" => "active",
+             "tradable" => true
+           }
+         ]}
+      )
 
       {:ok, assets} = Assets.list(api_key: "test", api_secret: "test")
 
@@ -66,7 +70,11 @@ defmodule Alpa.Trading.AssetsTest do
     end
 
     test "handles API error" do
-      MockClient.mock_get("/v2/assets", {:error, Error.from_response(401, %{"message" => "Unauthorized"})})
+      MockClient.mock_get(
+        "/v2/assets",
+        {:error, Error.from_response(401, %{"message" => "Unauthorized"})}
+      )
+
       {:error, %Error{type: :unauthorized}} = Assets.list(api_key: "test", api_secret: "test")
     end
   end
@@ -78,19 +86,23 @@ defmodule Alpa.Trading.AssetsTest do
     end
 
     test "returns a single asset by symbol" do
-      MockClient.mock_get("/v2/assets/AAPL", {:ok, %{
-        "id" => "asset-1",
-        "class" => "us_equity",
-        "symbol" => "AAPL",
-        "name" => "Apple Inc.",
-        "exchange" => "NASDAQ",
-        "status" => "active",
-        "tradable" => true,
-        "fractionable" => true,
-        "min_order_size" => "1",
-        "min_trade_increment" => "1",
-        "price_increment" => "0.01"
-      }})
+      MockClient.mock_get(
+        "/v2/assets/AAPL",
+        {:ok,
+         %{
+           "id" => "asset-1",
+           "class" => "us_equity",
+           "symbol" => "AAPL",
+           "name" => "Apple Inc.",
+           "exchange" => "NASDAQ",
+           "status" => "active",
+           "tradable" => true,
+           "fractionable" => true,
+           "min_order_size" => "1",
+           "min_trade_increment" => "1",
+           "price_increment" => "0.01"
+         }}
+      )
 
       {:ok, asset} = Assets.get("AAPL", api_key: "test", api_secret: "test")
 
@@ -104,8 +116,13 @@ defmodule Alpa.Trading.AssetsTest do
     end
 
     test "handles not found error" do
-      MockClient.mock_get("/v2/assets/INVALID", {:error, Error.from_response(404, %{"message" => "asset not found"})})
-      {:error, %Error{type: :not_found}} = Assets.get("INVALID", api_key: "test", api_secret: "test")
+      MockClient.mock_get(
+        "/v2/assets/INVALID",
+        {:error, Error.from_response(404, %{"message" => "asset not found"})}
+      )
+
+      {:error, %Error{type: :not_found}} =
+        Assets.get("INVALID", api_key: "test", api_secret: "test")
     end
   end
 end

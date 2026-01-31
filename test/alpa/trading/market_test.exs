@@ -53,9 +53,13 @@ defmodule Alpa.Trading.MarketTest do
     end
 
     test "handles API error" do
-      MockClient.mock_get("/v2/clock", {:error, Error.from_response(500, %{"message" => "Internal Server Error"})})
+      MockClient.mock_get(
+        "/v2/clock",
+        {:error, Error.from_response(500, %{"message" => "Internal Server Error"})}
+      )
 
-      {:error, %Error{type: :server_error}} = Market.get_clock(api_key: "test", api_secret: "test")
+      {:error, %Error{type: :server_error}} =
+        Market.get_clock(api_key: "test", api_secret: "test")
     end
   end
 
@@ -121,22 +125,26 @@ defmodule Alpa.Trading.MarketTest do
     end
 
     test "returns calendar entries" do
-      MockClient.mock_get("/v2/calendar", {:ok, [
-        %{
-          "date" => "2024-01-15",
-          "open" => "09:30",
-          "close" => "16:00",
-          "session_open" => "04:00",
-          "session_close" => "20:00"
-        },
-        %{
-          "date" => "2024-01-16",
-          "open" => "09:30",
-          "close" => "16:00",
-          "session_open" => "04:00",
-          "session_close" => "20:00"
-        }
-      ]})
+      MockClient.mock_get(
+        "/v2/calendar",
+        {:ok,
+         [
+           %{
+             "date" => "2024-01-15",
+             "open" => "09:30",
+             "close" => "16:00",
+             "session_open" => "04:00",
+             "session_close" => "20:00"
+           },
+           %{
+             "date" => "2024-01-16",
+             "open" => "09:30",
+             "close" => "16:00",
+             "session_open" => "04:00",
+             "session_close" => "20:00"
+           }
+         ]}
+      )
 
       {:ok, calendar} = Market.get_calendar(api_key: "test", api_secret: "test")
 
@@ -158,7 +166,8 @@ defmodule Alpa.Trading.MarketTest do
     test "handles invalid response" do
       MockClient.mock_get("/v2/calendar", {:ok, %{"error" => "bad"}})
 
-      {:error, %Error{type: :invalid_response}} = Market.get_calendar(api_key: "test", api_secret: "test")
+      {:error, %Error{type: :invalid_response}} =
+        Market.get_calendar(api_key: "test", api_secret: "test")
     end
   end
 end

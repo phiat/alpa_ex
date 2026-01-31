@@ -50,7 +50,10 @@ defmodule Alpa.Trading.CorporateActionsTest do
     end
 
     test "returns corporate actions list" do
-      MockClient.mock_get("/v2/corporate_actions/announcements", {:ok, [@dividend_data, @split_data]})
+      MockClient.mock_get(
+        "/v2/corporate_actions/announcements",
+        {:ok, [@dividend_data, @split_data]}
+      )
 
       {:ok, actions} = CorporateActions.list(api_key: "test", api_secret: "test")
 
@@ -71,14 +74,18 @@ defmodule Alpa.Trading.CorporateActionsTest do
     test "handles invalid response" do
       MockClient.mock_get("/v2/corporate_actions/announcements", {:ok, %{"error" => "bad"}})
 
-      {:error, %Error{type: :invalid_response}} = CorporateActions.list(api_key: "test", api_secret: "test")
+      {:error, %Error{type: :invalid_response}} =
+        CorporateActions.list(api_key: "test", api_secret: "test")
     end
 
     test "handles API error" do
-      MockClient.mock_get("/v2/corporate_actions/announcements",
-        {:error, Error.from_response(422, %{"message" => "Invalid params"})})
+      MockClient.mock_get(
+        "/v2/corporate_actions/announcements",
+        {:error, Error.from_response(422, %{"message" => "Invalid params"})}
+      )
 
-      {:error, %Error{type: :unprocessable_entity}} = CorporateActions.list(api_key: "test", api_secret: "test")
+      {:error, %Error{type: :unprocessable_entity}} =
+        CorporateActions.list(api_key: "test", api_secret: "test")
     end
   end
 
@@ -103,10 +110,13 @@ defmodule Alpa.Trading.CorporateActionsTest do
     end
 
     test "handles not found" do
-      MockClient.mock_get("/v2/corporate_actions/announcements/nonexistent",
-        {:error, Error.from_response(404, %{"message" => "not found"})})
+      MockClient.mock_get(
+        "/v2/corporate_actions/announcements/nonexistent",
+        {:error, Error.from_response(404, %{"message" => "not found"})}
+      )
 
-      {:error, %Error{type: :not_found}} = CorporateActions.get("nonexistent", api_key: "test", api_secret: "test")
+      {:error, %Error{type: :not_found}} =
+        CorporateActions.get("nonexistent", api_key: "test", api_secret: "test")
     end
   end
 end

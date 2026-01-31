@@ -153,6 +153,7 @@ defmodule Alpa.Client do
 
   defp maybe_add_body(opts, body) do
     headers = Keyword.get(opts, :headers, [])
+
     opts
     |> Keyword.put(:json, body)
     |> Keyword.put(:headers, headers ++ [{"Content-Type", "application/json"}])

@@ -38,10 +38,14 @@ defmodule Alpa.Options.ContractsTest do
     end
 
     test "returns contracts with next page token" do
-      MockClient.mock_get("/v2/options/contracts", {:ok, %{
-        "option_contracts" => [@contract_data],
-        "next_page_token" => "token-abc"
-      }})
+      MockClient.mock_get(
+        "/v2/options/contracts",
+        {:ok,
+         %{
+           "option_contracts" => [@contract_data],
+           "next_page_token" => "token-abc"
+         }}
+      )
 
       {:ok, result} = Contracts.list(api_key: "test", api_secret: "test")
 
@@ -55,9 +59,13 @@ defmodule Alpa.Options.ContractsTest do
     end
 
     test "returns contracts without next page token" do
-      MockClient.mock_get("/v2/options/contracts", {:ok, %{
-        "option_contracts" => [@contract_data]
-      }})
+      MockClient.mock_get(
+        "/v2/options/contracts",
+        {:ok,
+         %{
+           "option_contracts" => [@contract_data]
+         }}
+      )
 
       {:ok, result} = Contracts.list(api_key: "test", api_secret: "test")
 
@@ -66,10 +74,14 @@ defmodule Alpa.Options.ContractsTest do
     end
 
     test "returns empty contracts" do
-      MockClient.mock_get("/v2/options/contracts", {:ok, %{
-        "option_contracts" => nil,
-        "next_page_token" => nil
-      }})
+      MockClient.mock_get(
+        "/v2/options/contracts",
+        {:ok,
+         %{
+           "option_contracts" => nil,
+           "next_page_token" => nil
+         }}
+      )
 
       {:ok, result} = Contracts.list(api_key: "test", api_secret: "test")
 
@@ -78,8 +90,10 @@ defmodule Alpa.Options.ContractsTest do
     end
 
     test "handles API error" do
-      MockClient.mock_get("/v2/options/contracts",
-        {:error, Error.from_response(401, %{"message" => "Unauthorized"})})
+      MockClient.mock_get(
+        "/v2/options/contracts",
+        {:error, Error.from_response(401, %{"message" => "Unauthorized"})}
+      )
 
       {:error, %Error{type: :unauthorized}} = Contracts.list(api_key: "test", api_secret: "test")
     end
@@ -108,10 +122,13 @@ defmodule Alpa.Options.ContractsTest do
     end
 
     test "handles not found" do
-      MockClient.mock_get("/v2/options/contracts/INVALID",
-        {:error, Error.from_response(404, %{"message" => "not found"})})
+      MockClient.mock_get(
+        "/v2/options/contracts/INVALID",
+        {:error, Error.from_response(404, %{"message" => "not found"})}
+      )
 
-      {:error, %Error{type: :not_found}} = Contracts.get("INVALID", api_key: "test", api_secret: "test")
+      {:error, %Error{type: :not_found}} =
+        Contracts.get("INVALID", api_key: "test", api_secret: "test")
     end
   end
 
@@ -122,10 +139,14 @@ defmodule Alpa.Options.ContractsTest do
     end
 
     test "searches by underlying symbol" do
-      MockClient.mock_get("/v2/options/contracts", {:ok, %{
-        "option_contracts" => [@contract_data],
-        "next_page_token" => nil
-      }})
+      MockClient.mock_get(
+        "/v2/options/contracts",
+        {:ok,
+         %{
+           "option_contracts" => [@contract_data],
+           "next_page_token" => nil
+         }}
+      )
 
       {:ok, result} = Contracts.search("AAPL", api_key: "test", api_secret: "test")
 
@@ -134,10 +155,14 @@ defmodule Alpa.Options.ContractsTest do
     end
 
     test "converts atom type to string" do
-      MockClient.mock_get("/v2/options/contracts", {:ok, %{
-        "option_contracts" => [@contract_data],
-        "next_page_token" => nil
-      }})
+      MockClient.mock_get(
+        "/v2/options/contracts",
+        {:ok,
+         %{
+           "option_contracts" => [@contract_data],
+           "next_page_token" => nil
+         }}
+      )
 
       {:ok, result} = Contracts.search("AAPL", type: :call, api_key: "test", api_secret: "test")
 
@@ -146,10 +171,15 @@ defmodule Alpa.Options.ContractsTest do
 
     test "handles put type conversion" do
       put_contract = %{@contract_data | "type" => "put", "symbol" => "AAPL240119P00185000"}
-      MockClient.mock_get("/v2/options/contracts", {:ok, %{
-        "option_contracts" => [put_contract],
-        "next_page_token" => nil
-      }})
+
+      MockClient.mock_get(
+        "/v2/options/contracts",
+        {:ok,
+         %{
+           "option_contracts" => [put_contract],
+           "next_page_token" => nil
+         }}
+      )
 
       {:ok, result} = Contracts.search("AAPL", type: :put, api_key: "test", api_secret: "test")
 

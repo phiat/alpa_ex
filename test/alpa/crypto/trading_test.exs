@@ -82,7 +82,9 @@ defmodule Alpa.Crypto.TradingTest do
 
     test "handles invalid response" do
       MockClient.mock_get("/v2/assets", {:ok, %{"error" => "unexpected"}})
-      {:error, %Error{type: :invalid_response}} = Trading.assets(api_key: "test", api_secret: "test")
+
+      {:error, %Error{type: :invalid_response}} =
+        Trading.assets(api_key: "test", api_secret: "test")
     end
   end
 
@@ -146,7 +148,9 @@ defmodule Alpa.Crypto.TradingTest do
 
     test "handles invalid response" do
       MockClient.mock_get("/v2/positions", {:ok, %{"error" => "unexpected"}})
-      {:error, %Error{type: :invalid_response}} = Trading.positions(api_key: "test", api_secret: "test")
+
+      {:error, %Error{type: :invalid_response}} =
+        Trading.positions(api_key: "test", api_secret: "test")
     end
   end
 
@@ -171,15 +175,16 @@ defmodule Alpa.Crypto.TradingTest do
 
   describe "place_order/1" do
     test "requires credentials" do
-      result = Trading.place_order(
-        symbol: "BTC/USD",
-        qty: "0.01",
-        side: "buy",
-        type: "market",
-        time_in_force: "gtc",
-        api_key: nil,
-        api_secret: nil
-      )
+      result =
+        Trading.place_order(
+          symbol: "BTC/USD",
+          qty: "0.01",
+          side: "buy",
+          type: "market",
+          time_in_force: "gtc",
+          api_key: nil,
+          api_secret: nil
+        )
 
       assert {:error, %Error{type: :missing_credentials}} = result
     end
@@ -187,15 +192,16 @@ defmodule Alpa.Crypto.TradingTest do
     test "places a crypto market order" do
       MockClient.mock_post("/v2/orders", {:ok, @order_response})
 
-      {:ok, order} = Trading.place_order(
-        symbol: "BTC/USD",
-        qty: "0.01",
-        side: "buy",
-        type: "market",
-        time_in_force: "gtc",
-        api_key: "test",
-        api_secret: "test"
-      )
+      {:ok, order} =
+        Trading.place_order(
+          symbol: "BTC/USD",
+          qty: "0.01",
+          side: "buy",
+          type: "market",
+          time_in_force: "gtc",
+          api_key: "test",
+          api_secret: "test"
+        )
 
       assert %Order{} = order
       assert order.id == "order-crypto-123"
@@ -206,40 +212,46 @@ defmodule Alpa.Crypto.TradingTest do
     end
 
     test "places a crypto limit order" do
-      limit_response = @order_response
+      limit_response =
+        @order_response
         |> Map.put("order_type", "limit")
         |> Map.put("type", "limit")
         |> Map.put("limit_price", "40000.00")
+
       MockClient.mock_post("/v2/orders", {:ok, limit_response})
 
-      {:ok, order} = Trading.place_order(
-        symbol: "BTC/USD",
-        qty: "0.1",
-        side: "buy",
-        type: "limit",
-        limit_price: "40000",
-        time_in_force: "gtc",
-        api_key: "test",
-        api_secret: "test"
-      )
+      {:ok, order} =
+        Trading.place_order(
+          symbol: "BTC/USD",
+          qty: "0.1",
+          side: "buy",
+          type: "limit",
+          limit_price: "40000",
+          time_in_force: "gtc",
+          api_key: "test",
+          api_secret: "test"
+        )
 
       assert order.order_type == :limit
       assert Decimal.eq?(order.limit_price, Decimal.new("40000.00"))
     end
 
     test "handles API error" do
-      MockClient.mock_post("/v2/orders",
-        {:error, Error.from_response(422, %{"message" => "insufficient balance"})})
-
-      {:error, %Error{type: :unprocessable_entity}} = Trading.place_order(
-        symbol: "BTC/USD",
-        qty: "100",
-        side: "buy",
-        type: "market",
-        time_in_force: "gtc",
-        api_key: "test",
-        api_secret: "test"
+      MockClient.mock_post(
+        "/v2/orders",
+        {:error, Error.from_response(422, %{"message" => "insufficient balance"})}
       )
+
+      {:error, %Error{type: :unprocessable_entity}} =
+        Trading.place_order(
+          symbol: "BTC/USD",
+          qty: "100",
+          side: "buy",
+          type: "market",
+          time_in_force: "gtc",
+          api_key: "test",
+          api_secret: "test"
+        )
     end
   end
 

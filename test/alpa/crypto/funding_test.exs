@@ -64,7 +64,9 @@ defmodule Alpa.Crypto.FundingTest do
 
     test "handles invalid response" do
       MockClient.mock_get("/v2/crypto/funding/wallets", {:ok, %{"error" => "bad"}})
-      {:error, %Error{type: :invalid_response}} = Funding.list_wallets(api_key: "test", api_secret: "test")
+
+      {:error, %Error{type: :invalid_response}} =
+        Funding.list_wallets(api_key: "test", api_secret: "test")
     end
   end
 
@@ -94,7 +96,9 @@ defmodule Alpa.Crypto.FundingTest do
 
     test "handles invalid response" do
       MockClient.mock_get("/v2/crypto/funding/transfers", {:ok, %{"error" => "bad"}})
-      {:error, %Error{type: :invalid_response}} = Funding.list_transfers(api_key: "test", api_secret: "test")
+
+      {:error, %Error{type: :invalid_response}} =
+        Funding.list_transfers(api_key: "test", api_secret: "test")
     end
   end
 
@@ -107,7 +111,8 @@ defmodule Alpa.Crypto.FundingTest do
     test "returns a single transfer" do
       MockClient.mock_get("/v2/crypto/funding/transfers/transfer-abc-123", {:ok, @transfer_data})
 
-      {:ok, transfer} = Funding.get_transfer("transfer-abc-123", api_key: "test", api_secret: "test")
+      {:ok, transfer} =
+        Funding.get_transfer("transfer-abc-123", api_key: "test", api_secret: "test")
 
       assert %CryptoTransfer{} = transfer
       assert transfer.id == "transfer-abc-123"
@@ -119,22 +124,26 @@ defmodule Alpa.Crypto.FundingTest do
     end
 
     test "handles not found" do
-      MockClient.mock_get("/v2/crypto/funding/transfers/nonexistent",
-        {:error, Error.from_response(404, %{"message" => "not found"})})
+      MockClient.mock_get(
+        "/v2/crypto/funding/transfers/nonexistent",
+        {:error, Error.from_response(404, %{"message" => "not found"})}
+      )
 
-      {:error, %Error{type: :not_found}} = Funding.get_transfer("nonexistent", api_key: "test", api_secret: "test")
+      {:error, %Error{type: :not_found}} =
+        Funding.get_transfer("nonexistent", api_key: "test", api_secret: "test")
     end
   end
 
   describe "create_transfer/1" do
     test "requires credentials" do
-      result = Funding.create_transfer(
-        amount: "0.5",
-        address: "bc1q123",
-        symbol: "BTC",
-        api_key: nil,
-        api_secret: nil
-      )
+      result =
+        Funding.create_transfer(
+          amount: "0.5",
+          address: "bc1q123",
+          symbol: "BTC",
+          api_key: nil,
+          api_secret: nil
+        )
 
       assert {:error, %Error{type: :missing_credentials}} = result
     end
@@ -153,13 +162,14 @@ defmodule Alpa.Crypto.FundingTest do
 
       MockClient.mock_post("/v2/crypto/funding/transfers", {:ok, new_transfer})
 
-      {:ok, transfer} = Funding.create_transfer(
-        amount: "0.5",
-        address: "bc1qrecipient456",
-        symbol: "BTC",
-        api_key: "test",
-        api_secret: "test"
-      )
+      {:ok, transfer} =
+        Funding.create_transfer(
+          amount: "0.5",
+          address: "bc1qrecipient456",
+          symbol: "BTC",
+          api_key: "test",
+          api_secret: "test"
+        )
 
       assert %CryptoTransfer{} = transfer
       assert transfer.id == "transfer-new-789"
@@ -168,16 +178,19 @@ defmodule Alpa.Crypto.FundingTest do
     end
 
     test "handles API error" do
-      MockClient.mock_post("/v2/crypto/funding/transfers",
-        {:error, Error.from_response(422, %{"message" => "insufficient balance"})})
-
-      {:error, %Error{type: :unprocessable_entity}} = Funding.create_transfer(
-        amount: "100",
-        address: "bc1q123",
-        symbol: "BTC",
-        api_key: "test",
-        api_secret: "test"
+      MockClient.mock_post(
+        "/v2/crypto/funding/transfers",
+        {:error, Error.from_response(422, %{"message" => "insufficient balance"})}
       )
+
+      {:error, %Error{type: :unprocessable_entity}} =
+        Funding.create_transfer(
+          amount: "100",
+          address: "bc1q123",
+          symbol: "BTC",
+          api_key: "test",
+          api_secret: "test"
+        )
     end
   end
 end
