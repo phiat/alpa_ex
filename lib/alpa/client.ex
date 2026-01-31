@@ -91,11 +91,11 @@ defmodule Alpa.Client do
 
       result =
         case Req.request(req_opts) do
-          {:ok, %Req.Response{status: status, body: body}} when status in 200..299 ->
-            {:ok, body}
-
           {:ok, %Req.Response{status: 204}} ->
             {:ok, :deleted}
+
+          {:ok, %Req.Response{status: status, body: body}} when status in 200..299 ->
+            {:ok, body}
 
           {:ok, %Req.Response{status: status, body: body}} ->
             {:error, Error.from_response(status, body)}

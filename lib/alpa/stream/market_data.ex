@@ -220,7 +220,7 @@ defmodule Alpa.Stream.MarketData do
 
   @impl WebSockex
   def handle_frame({:ping, _}, state) do
-    {:reply, :pong, state}
+    {:ok, state}
   end
 
   @impl WebSockex

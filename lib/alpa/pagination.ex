@@ -2,25 +2,33 @@ defmodule Alpa.Pagination do
   @moduledoc """
   Pagination helpers for Alpaca API list endpoints.
 
-  Provides auto-pagination and streaming for endpoints that return
-  paginated results using `next_page_token`.
+  Fetches results from paginated endpoints. Currently supports single-page
+  fetching with configurable limits. Multi-page token-based pagination
+  will be added when API functions are updated to return `next_page_token`.
 
   ## Usage
 
-      # Fetch all orders across pages
-      Alpa.Pagination.all(&Alpa.Trading.Orders.list/1, status: "closed")
+      # Fetch results (respects :limit option)
+      {:ok, orders} = Alpa.Pagination.all(&Alpa.Trading.Orders.list/1, status: "closed", limit: 500)
 
-      # Stream pages lazily
+      # Stream results lazily
       Alpa.Pagination.stream(&Alpa.Trading.Orders.list/1, status: "closed")
       |> Stream.take(100)
       |> Enum.to_list()
+
+  ## Limitations
+
+  Alpaca's API uses `next_page_token` for pagination, but the SDK's API
+  functions currently return only the parsed results without the token.
+  Until the response format is extended to include pagination metadata,
+  `all/2` and `stream/2` fetch a single page per call. Use the `:limit`
+  option to control how many results are returned.
   """
 
   @doc """
-  Fetch all results across all pages.
+  Fetch all results from a paginated endpoint.
 
-  Calls the given function repeatedly, following `next_page_token`
-  until all results are collected.
+  Calls the given function with the provided options and returns all results.
 
   ## Parameters
 
@@ -28,29 +36,26 @@ defmodule Alpa.Pagination do
       and returns `{:ok, results}` or `{:error, error}`
     * `opts` - Options to pass to the fetch function
 
-  ## Options
-
-    * `:max_pages` - Maximum number of pages to fetch (default: 100)
-
   ## Examples
 
-      iex> Alpa.Pagination.all(&Alpa.Trading.Orders.list/1, status: "closed", limit: 100)
+      iex> Alpa.Pagination.all(&Alpa.Trading.Orders.list/1, status: "closed", limit: 500)
       {:ok, [%Alpa.Models.Order{}, ...]}
 
   """
   @spec all((keyword() -> {:ok, list()} | {:error, term()}), keyword()) ::
           {:ok, list()} | {:error, term()}
   def all(fetch_fn, opts \\ []) do
-    max_pages = Keyword.get(opts, :max_pages, 100)
-    opts = Keyword.delete(opts, :max_pages)
-
-    do_fetch_all(fetch_fn, opts, [], max_pages, 0)
+    case fetch_fn.(opts) do
+      {:ok, results} when is_list(results) -> {:ok, results}
+      {:ok, other} -> {:ok, other}
+      {:error, _} = error -> error
+    end
   end
 
   @doc """
-  Create a lazy stream of paginated results.
+  Create a lazy stream of results from a paginated endpoint.
 
-  Returns a `Stream` that fetches pages on demand. Each element
+  Returns a `Stream` that fetches a page on demand. Each element
   in the stream is an individual result item (not a page).
 
   ## Examples
@@ -63,15 +68,15 @@ defmodule Alpa.Pagination do
   @spec stream((keyword() -> {:ok, list()} | {:error, term()}), keyword()) :: Enumerable.t()
   def stream(fetch_fn, opts \\ []) do
     Stream.resource(
-      fn -> {fetch_fn, opts, :initial} end,
+      fn -> :initial end,
       fn
-        {_fetch_fn, _opts, :done} ->
+        :done ->
           {:halt, :done}
 
-        {fetch_fn, opts, :initial} ->
+        :initial ->
           case fetch_fn.(opts) do
             {:ok, [_ | _] = results} ->
-              {results, {fetch_fn, opts, :continue}}
+              {results, :done}
 
             {:ok, _} ->
               {:halt, :done}
@@ -79,51 +84,8 @@ defmodule Alpa.Pagination do
             {:error, _} ->
               {:halt, :done}
           end
-
-        {_fetch_fn, _opts, :continue} ->
-          # Note: pagination depends on the API returning a next_page_token
-          # For now, this fetches a single page. Full token-based pagination
-          # requires the API functions to return the token alongside results.
-          {:halt, :done}
       end,
       fn _state -> :ok end
     )
-  end
-
-  # Private
-
-  defp do_fetch_all(_fetch_fn, _opts, acc, max_pages, page) when page >= max_pages do
-    {:ok, Enum.reverse(List.flatten(acc))}
-  end
-
-  defp do_fetch_all(fetch_fn, opts, acc, _max_pages, _page) do
-    case fetch_fn.(opts) do
-      {:ok, [_ | _] = results} ->
-        # If we got fewer results than the limit, we're on the last page
-        limit = Keyword.get(opts, :limit, 50)
-
-        if Enum.count(results) < limit do
-          {:ok, Enum.reverse(List.flatten([results | acc]))}
-        else
-          # For endpoints that support page_token, we'd extract it here
-          # For now, we just return what we have since token extraction
-          # requires changes to the response format
-          {:ok, Enum.reverse(List.flatten([results | acc]))}
-        end
-
-      {:ok, results} when is_list(results) ->
-        {:ok, Enum.reverse(List.flatten(acc))}
-
-      {:ok, _} ->
-        {:ok, Enum.reverse(List.flatten(acc))}
-
-      {:error, _} = error ->
-        if acc == [] do
-          error
-        else
-          # Return what we have so far
-          {:ok, Enum.reverse(List.flatten(acc))}
-        end
-    end
   end
 end

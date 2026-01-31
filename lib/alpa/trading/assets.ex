@@ -50,7 +50,7 @@ defmodule Alpa.Trading.Assets do
   """
   @spec get(String.t(), keyword()) :: {:ok, Asset.t()} | {:error, Alpa.Error.t()}
   def get(symbol_or_asset_id, opts \\ []) do
-    case Client.get("/v2/assets/#{symbol_or_asset_id}", opts) do
+    case Client.get("/v2/assets/#{URI.encode_www_form(symbol_or_asset_id)}", opts) do
       {:ok, data} -> {:ok, Asset.from_map(data)}
       {:error, _} = error -> error
     end

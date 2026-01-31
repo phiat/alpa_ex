@@ -131,6 +131,9 @@ defmodule Alpa.MixProject do
       # WebSocket client for streaming
       {:websockex, "~> 0.4"},
 
+      # Telemetry for API call instrumentation
+      {:telemetry, "~> 1.0"},
+
       # Development & Testing
       {:ex_doc, "~> 0.31", only: :dev, runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},

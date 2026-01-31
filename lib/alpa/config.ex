@@ -146,3 +146,17 @@ defmodule Alpa.Config do
     Application.get_env(:alpa_ex, :paper_url, "https://paper-api.alpaca.markets")
   end
 end
+
+defimpl Inspect, for: Alpa.Config do
+  import Inspect.Algebra
+
+  def inspect(%Alpa.Config{} = config, opts) do
+    redacted = %{
+      config
+      | api_key: if(config.api_key, do: "***", else: nil),
+        api_secret: if(config.api_secret, do: "***", else: nil)
+    }
+
+    concat(["#Alpa.Config<", to_doc(Map.from_struct(redacted), opts), ">"])
+  end
+end
