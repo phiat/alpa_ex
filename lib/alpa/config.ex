@@ -83,8 +83,6 @@ defmodule Alpa.Config do
   resolves to the paper trading URL.
   """
   @spec trading_url(t()) :: String.t()
-  def trading_url(%__MODULE__{trading_url: url}) when url != @default_trading_url, do: url
-  def trading_url(%__MODULE__{use_paper: true}), do: paper_url()
   def trading_url(%__MODULE__{trading_url: url}), do: url
 
   @doc """
@@ -129,14 +127,18 @@ defmodule Alpa.Config do
   defp get_from_env(_), do: nil
 
   defp get_trading_url(opts) do
-    custom_url = get_opt(opts, :trading_url)
-    use_paper = get_opt(opts, :use_paper, true)
+    case Keyword.fetch(opts, :trading_url) do
+      {:ok, url} ->
+        url
 
-    cond do
-      # Explicit custom URL takes precedence over use_paper
-      is_binary(custom_url) and custom_url != @default_trading_url -> custom_url
-      use_paper -> paper_url()
-      true -> @default_trading_url
+      :error ->
+        use_paper = get_opt(opts, :use_paper, true)
+
+        if use_paper do
+          paper_url()
+        else
+          @default_trading_url
+        end
     end
   end
 
