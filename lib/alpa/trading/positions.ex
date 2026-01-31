@@ -140,6 +140,6 @@ defmodule Alpa.Trading.Positions do
   @spec do_not_exercise(String.t(), keyword()) :: {:ok, any()} | {:error, Alpa.Error.t()}
   def do_not_exercise(symbol_or_asset_id, opts \\ []) do
     encoded_symbol = URI.encode_www_form(symbol_or_asset_id)
-    Client.post("/v2/positions/#{encoded_symbol}/do_not_exercise", nil, opts)
+    Client.post("/v2/positions/#{encoded_symbol}/do-not-exercise", nil, opts)
   end
 end
