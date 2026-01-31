@@ -364,7 +364,7 @@ mix dialyzer
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) for details.
+MIT License - see [LICENSE](https://github.com/phiat/alpa_ex/blob/main/LICENSE) for details.
 
 ## Links
 

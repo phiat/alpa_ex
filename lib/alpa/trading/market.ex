@@ -81,7 +81,6 @@ defmodule Alpa.Trading.Market do
 
     case Client.get("/v2/calendar", Keyword.put(opts, :params, params)) do
       {:ok, data} when is_list(data) -> {:ok, Enum.map(data, &Calendar.from_map/1)}
-      {:ok, data} -> {:ok, data}
       {:error, _} = error -> error
     end
   end

@@ -41,8 +41,10 @@ defmodule Alpa do
     * `Alpa.MarketData.Quotes` - Quote (NBBO) data
     * `Alpa.MarketData.Trades` - Trade data
     * `Alpa.MarketData.Snapshots` - Market snapshots
+    * `Alpa.Crypto.Trading` - Crypto trading (orders, positions, assets)
     * `Alpa.Crypto.MarketData` - Crypto market data (bars, quotes, trades, snapshots)
     * `Alpa.Crypto.Funding` - Crypto wallets and transfers
+    * `Alpa.Options.Contracts` - Options contract search and lookup
 
   ## Configuration
 
@@ -57,7 +59,9 @@ defmodule Alpa do
 
   alias Alpa.Crypto.Funding
   alias Alpa.Crypto.MarketData, as: CryptoMarketData
+  alias Alpa.Crypto.Trading, as: CryptoTrading
   alias Alpa.MarketData.{Bars, Quotes, Snapshots, Trades}
+  alias Alpa.Options.Contracts
   alias Alpa.Trading.{Account, Assets, CorporateActions, Market, Orders, Positions, Watchlists}
 
   # ============================================================================
@@ -419,4 +423,68 @@ defmodule Alpa do
   See `Alpa.Crypto.Funding.create_transfer/1` for details.
   """
   defdelegate crypto_withdraw(params), to: Funding, as: :create_transfer
+
+  # ============================================================================
+  # Crypto Trading
+  # ============================================================================
+
+  @doc """
+  Get all available crypto assets.
+
+  See `Alpa.Crypto.Trading.assets/1` for details.
+  """
+  defdelegate crypto_assets(opts \\ []), to: CryptoTrading, as: :assets
+
+  @doc """
+  Place a crypto order.
+
+  See `Alpa.Crypto.Trading.place_order/1` for details.
+  """
+  defdelegate crypto_place_order(params), to: CryptoTrading, as: :place_order
+
+  @doc """
+  Buy crypto with a market order.
+
+  See `Alpa.Crypto.Trading.buy/3` for details.
+  """
+  defdelegate crypto_buy(symbol, qty, opts \\ []), to: CryptoTrading, as: :buy
+
+  @doc """
+  Sell crypto with a market order.
+
+  See `Alpa.Crypto.Trading.sell/3` for details.
+  """
+  defdelegate crypto_sell(symbol, qty, opts \\ []), to: CryptoTrading, as: :sell
+
+  @doc """
+  Get all crypto positions.
+
+  See `Alpa.Crypto.Trading.positions/1` for details.
+  """
+  defdelegate crypto_positions(opts \\ []), to: CryptoTrading, as: :positions
+
+  # ============================================================================
+  # Options
+  # ============================================================================
+
+  @doc """
+  Get option contracts with filtering.
+
+  See `Alpa.Options.Contracts.list/1` for details.
+  """
+  defdelegate option_contracts(opts \\ []), to: Contracts, as: :list
+
+  @doc """
+  Get a specific option contract by symbol or ID.
+
+  See `Alpa.Options.Contracts.get/2` for details.
+  """
+  defdelegate option_contract(symbol_or_id, opts \\ []), to: Contracts, as: :get
+
+  @doc """
+  Search for option contracts by underlying symbol.
+
+  See `Alpa.Options.Contracts.search/2` for details.
+  """
+  defdelegate option_search(underlying_symbol, opts \\ []), to: Contracts, as: :search
 end
