@@ -14,8 +14,9 @@ mix test
 Before submitting a PR, ensure:
 
 ```bash
-mix test                          # All tests pass
 mix compile --warnings-as-errors  # No warnings
+mix format --check-formatted      # Code formatting
+mix test                          # All tests pass
 mix credo                         # Static analysis
 mix dialyzer                      # Type checking
 ```

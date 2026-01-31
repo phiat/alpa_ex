@@ -32,7 +32,8 @@ lib/
 │   ├── crypto/
 │   │   ├── funding.ex             # Crypto wallets and transfers
 │   │   ├── trading.ex             # Crypto-specific trading helpers
-│   │   └── market_data.ex         # Crypto bars, quotes, trades, snapshots, orderbook
+│   │   ├── market_data.ex         # Crypto bars, quotes, trades, snapshots, orderbook
+│   │   └── funding.ex             # Crypto transfers and wallets
 │   └── models/
 │       ├── account.ex             # Account struct
 │       ├── account_config.ex      # Account configuration struct

@@ -46,6 +46,11 @@
 | Crypto Trades | GET | `/v1beta3/crypto/{loc}/trades` | `Alpa.Crypto.MarketData` | Done |
 | Crypto Snapshots | GET | `/v1beta3/crypto/{loc}/snapshots` | `Alpa.Crypto.MarketData` | Done |
 | Crypto Orderbook | GET | `/v1beta3/crypto/{loc}/orderbooks` | `Alpa.Crypto.MarketData` | Done |
+| **Crypto Funding** | | | | |
+| List Wallets | GET | `/v2/crypto/funding/wallets` | `Alpa.Crypto.Funding` | Done |
+| List Transfers | GET | `/v2/crypto/funding/transfers` | `Alpa.Crypto.Funding` | Done |
+| Get Transfer | GET | `/v2/crypto/funding/transfers/{id}` | `Alpa.Crypto.Funding` | Done |
+| Create Transfer | POST | `/v2/crypto/funding/transfers` | `Alpa.Crypto.Funding` | Done |
 | **Streaming** | | | | |
 | Trade Updates | WSS | `/stream` | `Alpa.Stream.TradeUpdates` | Done |
 | Market Data | WSS | `/v2/{feed}` | `Alpa.Stream.MarketData` | Done |

@@ -1,4 +1,4 @@
-# AlpaEx
+# Alpa
 
 [![Hex.pm](https://img.shields.io/hexpm/v/alpa_ex.svg)](https://hex.pm/packages/alpa_ex)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-blue.svg)](https://hexdocs.pm/alpa_ex)
@@ -10,20 +10,21 @@ Commission-free stock, options, and crypto trading with real-time market data.
 
 ## Features
 
-- **Trading API** -- Account management, orders, positions, watchlists, corporate actions
-- **Market Data API** -- Historical and real-time bars, quotes, trades, snapshots
-- **WebSocket Streaming** -- Real-time trade updates and market data feeds
-- **Options Trading** -- Option contract search and trading
-- **Crypto Trading** -- 24/7 cryptocurrency trading with dedicated market data
-- **Crypto Funding** -- Wallet management and crypto transfers
-- **Pagination** -- Built-in helpers for paginated endpoints (`all/2`, `stream/2`)
-- **Telemetry** -- Instrumented API calls via `:telemetry`
-- **TypedStruct Models** -- Fully typed responses with `Decimal` precision
-- **Modern Stack** -- Elixir 1.16+, Req HTTP client, WebSockex
+- **Trading API** - Account management, orders, positions, watchlists
+- **Market Data API** - Historical and real-time bars, quotes, trades, snapshots
+- **WebSocket Streaming** - Real-time trade updates and market data
+- **Options Trading** - Option contract search and trading
+- **Crypto Trading** - 24/7 cryptocurrency trading
+- **TypedStruct Models** - Fully typed responses with Decimal precision
+- **Crypto Market Data** - Bars, quotes, trades, snapshots, and order books
+- **Corporate Actions** - Announcements and corporate action tracking
+- **Pagination Helpers** - Eager `all/2` and lazy `stream/2` for paginated endpoints
+- **Telemetry** - Built-in `:telemetry` events for observability
+- **Modern Stack** - Elixir 1.16+, Req HTTP client, WebSockex
 
 ## Installation
 
-Add `alpa_ex` to your list of dependencies in `mix.exs`:
+Add `alpa` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
@@ -32,8 +33,6 @@ def deps do
   ]
 end
 ```
-
-Then run `mix deps.get`.
 
 ## Configuration
 
@@ -289,7 +288,7 @@ Alpa.Stream.MarketData.stop(pid)
 
 | Module | Description |
 |--------|-------------|
-| `Alpa` | Main facade with delegated convenience functions |
+| `Alpa` | Main facade with delegated functions |
 | `Alpa.Trading.Account` | Account info, config, activities, portfolio history |
 | `Alpa.Trading.Orders` | Order placement and management |
 | `Alpa.Trading.Positions` | Position management |
@@ -301,13 +300,12 @@ Alpa.Stream.MarketData.stop(pid)
 | `Alpa.MarketData.Quotes` | Historical quote data |
 | `Alpa.MarketData.Trades` | Historical trade data |
 | `Alpa.MarketData.Snapshots` | Market snapshots |
-| `Alpa.Stream.TradeUpdates` | Real-time order/trade updates via WebSocket |
-| `Alpa.Stream.MarketData` | Real-time market data via WebSocket |
-| `Alpa.Options.Contracts` | Options contract search and lookup |
+| `Alpa.Stream.TradeUpdates` | Real-time trade updates |
+| `Alpa.Stream.MarketData` | Real-time market data |
+| `Alpa.Options.Contracts` | Options contract search |
 | `Alpa.Crypto.Trading` | Crypto trading operations |
-| `Alpa.Crypto.MarketData` | Crypto bars, quotes, trades, snapshots, orderbook |
-| `Alpa.Crypto.Funding` | Crypto wallets and transfers |
-| `Alpa.Pagination` | Helpers for paginated endpoints |
+| `Alpa.Crypto.MarketData` | Crypto bars, quotes, trades, snapshots, order books |
+| `Alpa.Crypto.Funding` | Crypto transfers and wallets |
 
 ## Error Handling
 
@@ -364,21 +362,11 @@ mix credo
 mix dialyzer
 ```
 
-## Documentation
-
-- [Getting Started](docs/Getting-Started.md)
-- [Architecture](docs/Architecture.md)
-- [API Coverage](docs/API-Coverage.md)
-- [Trading Strategies](docs/Trading-Strategies.md)
-- [Contributing](docs/Contributing.md)
-
 ## License
 
-MIT License -- see [LICENSE](LICENSE) for details.
+MIT License - see [LICENSE](LICENSE) for details.
 
 ## Links
 
-- [Hex Package](https://hex.pm/packages/alpa_ex)
-- [HexDocs](https://hexdocs.pm/alpa_ex)
 - [Alpaca API Documentation](https://docs.alpaca.markets/)
 - [GitHub Repository](https://github.com/phiat/alpa_ex)

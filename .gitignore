@@ -34,6 +34,10 @@ alpa-*.tar
 .idea/
 .vscode/
 *.sublime-*
+.elixir_ls/
+
+# macOS
+.DS_Store
 
 # Original cloned repo (reference only)
 /alpa/
