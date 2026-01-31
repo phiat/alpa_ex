@@ -45,9 +45,10 @@ defmodule Alpa.Stream.MarketData do
   @iex_stream_url "wss://stream.data.alpaca.markets/v2/iex"
   @sip_stream_url "wss://stream.data.alpaca.markets/v2/sip"
 
-  @max_reconnect_delay 60_000
-  @base_reconnect_delay 1_000
-  @jitter_max 1_000
+  @max_reconnect_ms 60_000
+  @initial_backoff_ms 1_000
+  @jitter_min 0.5
+  @jitter_max 1.5
 
   defstruct [:callback, :config, :authenticated, :subscriptions, :connection_status, reconnect_attempts: 0]
 
@@ -141,6 +142,18 @@ defmodule Alpa.Stream.MarketData do
   @spec stop(pid()) :: :ok
   def stop(pid) do
     WebSockex.cast(pid, :close)
+  end
+
+  @doc """
+  Returns the current connection status.
+
+  Possible values: `:connected`, `:disconnected`, `:connecting`
+  """
+  @spec connection_status(pid()) :: :connected | :disconnected | :connecting
+  def connection_status(pid) do
+    # Use :sys.get_state to read the WebSockex process state
+    state = :sys.get_state(pid)
+    state.connection_status
   end
 
   # WebSockex Callbacks
@@ -325,9 +338,9 @@ defmodule Alpa.Stream.MarketData do
   # Private helpers
 
   defp reconnect_delay(attempts) do
-    base = min(@base_reconnect_delay * Integer.pow(2, attempts - 1), @max_reconnect_delay)
-    jitter = :rand.uniform(@jitter_max)
-    base + jitter
+    base = min(@initial_backoff_ms * Integer.pow(2, attempts - 1), @max_reconnect_ms)
+    jitter_factor = @jitter_min + :rand.uniform() * (@jitter_max - @jitter_min)
+    trunc(base * jitter_factor)
   end
 
   defp invoke_callback(event, state) do
