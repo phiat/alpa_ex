@@ -310,6 +310,8 @@ Alpa.Stream.MarketData.stop(pid)
 | `Alpa.Crypto.Trading` | Crypto trading operations |
 | `Alpa.Crypto.MarketData` | Crypto bars, quotes, trades, snapshots, order books |
 | `Alpa.Crypto.Funding` | Crypto transfers and wallets |
+| `Alpa.Helpers` | Shared parse helpers (decimal, datetime, date) |
+| `Alpa.Resource` | Macro for generating typed CRUD modules |
 
 ## Error Handling
 
@@ -335,13 +337,13 @@ Error types: `:unauthorized`, `:forbidden`, `:not_found`, `:unprocessable_entity
 
 ## Configuration Options
 
-| Option | Environment Variable | Default |
-|--------|---------------------|---------|
-| `api_key` | `APCA_API_KEY_ID` | - |
-| `api_secret` | `APCA_API_SECRET_KEY` | - |
-| `use_paper` | `APCA_USE_PAPER` | `true` |
-| `timeout` | - | `30_000` |
-| `receive_timeout` | - | `30_000` |
+| Option | Environment Variable | Fallback | Default |
+|--------|---------------------|----------|---------|
+| `api_key` | `APCA_API_KEY_ID` | `ALPACA_API_KEY` | - |
+| `api_secret` | `APCA_API_SECRET_KEY` | `ALPACA_API_SECRET` | - |
+| `use_paper` | `APCA_USE_PAPER` | - | `true` |
+| `timeout` | - | - | `30_000` |
+| `receive_timeout` | - | - | `30_000` |
 
 Options can be passed to any function to override config:
 

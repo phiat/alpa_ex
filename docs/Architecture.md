@@ -10,7 +10,9 @@ lib/
 │   ├── client.ex                  # HTTP client (Req-based) + telemetry
 │   ├── config.ex                  # Configuration management
 │   ├── error.ex                   # Error types and handling
+│   ├── helpers.ex                 # Shared parse helpers (decimal, datetime, date)
 │   ├── pagination.ex              # Pagination helpers (all/2, stream/2)
+│   ├── resource.ex                # Macro for generating typed CRUD functions
 │   ├── trading/
 │   │   ├── account.ex             # Account, config, activities, history
 │   │   ├── orders.ex              # Order CRUD + helpers

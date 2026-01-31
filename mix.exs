@@ -20,6 +20,8 @@ defmodule Alpa.MixProject do
       homepage_url: @source_url,
       dialyzer: [
         plt_add_apps: [:mix, :ex_unit],
+        plt_local_path: "priv/plts",
+        plt_core_path: "priv/plts",
         ignore_warnings: ".dialyzer_ignore.exs"
       ],
       test_coverage: [tool: ExCoveralls]
@@ -110,7 +112,9 @@ defmodule Alpa.MixProject do
           Alpa.Client,
           Alpa.Config,
           Alpa.Error,
-          Alpa.Pagination
+          Alpa.Helpers,
+          Alpa.Pagination,
+          Alpa.Resource
         ],
         Models: ~r/Alpa\.Models\./
       ]

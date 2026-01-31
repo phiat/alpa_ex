@@ -18,9 +18,15 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
-        elixir: ["1.16"]
-        otp: ["26"]
+        include:
+          - elixir: "1.14"
+            otp: "25"
+          - elixir: "1.15"
+            otp: "26"
+          - elixir: "1.16"
+            otp: "26"
 
     steps:
       - name: Checkout

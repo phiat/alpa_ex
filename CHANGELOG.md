@@ -5,11 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.0] - 2026-01-10
+## [1.0.0] - 2026-01-31
 
 ### Added
 
-- Complete rewrite with modern Elixir 1.16+ stack
+- Complete rewrite with modern Elixir 1.14+ stack
 - **HTTP Client**: Switched from HTTPoison to Req for better performance and DX
 - **TypedStruct Models**: All API responses now use typed structs with Decimal precision
 - **Runtime Configuration**: Proper runtime config via `config/runtime.exs`
@@ -54,7 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Minimum Elixir version: 1.16 (was 1.10)
+- Minimum Elixir version: 1.14 (was 1.10)
 - API responses now return typed structs instead of raw maps
 - Configuration uses runtime.exs instead of compile-time config
 - Error handling uses structured `Alpa.Error` type

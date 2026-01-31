@@ -145,13 +145,18 @@ defmodule Alpa.Client do
     [
       {"APCA-API-KEY-ID", key},
       {"APCA-API-SECRET-KEY", secret},
-      {"Content-Type", "application/json"},
       {"Accept", "application/json"}
     ]
   end
 
   defp maybe_add_body(opts, nil), do: opts
-  defp maybe_add_body(opts, body), do: Keyword.put(opts, :json, body)
+
+  defp maybe_add_body(opts, body) do
+    headers = Keyword.get(opts, :headers, [])
+    opts
+    |> Keyword.put(:json, body)
+    |> Keyword.put(:headers, headers ++ [{"Content-Type", "application/json"}])
+  end
 
   defp maybe_add_params(opts, keyword_opts) do
     params = Keyword.get(keyword_opts, :params)
