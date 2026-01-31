@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/alpa_ex.png" alt="Alpa" width="300">
+</p>
+
 # Alpa
 
 [![Hex.pm](https://img.shields.io/hexpm/v/alpa_ex.svg)](https://hex.pm/packages/alpa_ex)

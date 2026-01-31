@@ -54,7 +54,7 @@ defmodule Alpa.MixProject do
     [
       maintainers: ["phiat"],
       licenses: ["MIT"],
-      files: ~w(lib config mix.exs README.md CHANGELOG.md LICENSE),
+      files: ~w(lib config assets mix.exs README.md CHANGELOG.md LICENSE),
       links: %{
         "GitHub" => @source_url,
         "Alpaca API Docs" => "https://docs.alpaca.markets"
