@@ -148,7 +148,7 @@ defmodule Alpa.Integration.TradingTest do
       IO.puts("  Fetched watchlist with #{length(fetched.assets || [])} assets")
 
       # Add symbol
-      assert {:ok, updated} = Watchlists.add_symbol(watchlist.id, "GOOGL")
+      assert {:ok, _updated} = Watchlists.add_symbol(watchlist.id, "GOOGL")
       IO.puts("  Added GOOGL to watchlist")
 
       # Remove symbol

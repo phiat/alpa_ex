@@ -57,7 +57,7 @@ defmodule Alpa.Stream.TradeUpdatesTest do
     test "parses float values" do
       # Float values should be converted correctly
       qty = Decimal.from_float(10.5)
-      assert qty != nil
+      refute is_nil(qty)
     end
   end
 

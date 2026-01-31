@@ -128,6 +128,40 @@ defmodule Alpa.Trading.Account do
   end
 
   @doc """
+  Get account activities for a specific activity type.
+
+  ## Activity Types
+
+  Common types: "FILL", "TRANS", "MISC", "ACATC", "ACATS", "CSD", "CSW",
+  "DIV", "JNLC", "JNLS", "MA", "NC", "OPASN", "OPEXP", "OPXRC", "PTC", "PTR", "SSO", "SSP"
+
+  ## Options
+
+    * `:date` - Date to filter (format: "YYYY-MM-DD")
+    * `:until` - Filter activities until this time
+    * `:after` - Filter activities after this time
+    * `:direction` - Sort direction ("asc" or "desc")
+    * `:page_size` - Number of results per page (max 100)
+    * `:page_token` - Pagination token
+
+  ## Examples
+
+      iex> Alpa.Trading.Account.get_activities_by_type("FILL")
+      {:ok, [%{...}]}
+
+  """
+  @spec get_activities_by_type(String.t(), keyword()) :: {:ok, [map()]} | {:error, Alpa.Error.t()}
+  def get_activities_by_type(activity_type, opts \\ []) do
+    params =
+      opts
+      |> Keyword.take([:date, :until, :after, :direction, :page_size, :page_token])
+      |> Enum.reject(fn {_, v} -> is_nil(v) end)
+      |> Map.new()
+
+    Client.get("/v2/account/activities/#{activity_type}", Keyword.put(opts, :params, params))
+  end
+
+  @doc """
   Get portfolio history.
 
   Returns historical portfolio values over a time period.

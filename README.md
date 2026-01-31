@@ -21,7 +21,7 @@ Add `alpa` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:alpa, "~> 2.0"}
+    {:alpa_ex, "~> 1.0"}
   ]
 end
 ```

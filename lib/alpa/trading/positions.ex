@@ -112,4 +112,19 @@ defmodule Alpa.Trading.Positions do
 
     Client.delete("/v2/positions", opts)
   end
+
+  @doc """
+  Exercise an options position.
+
+  ## Examples
+
+      iex> Alpa.Trading.Positions.exercise("AAPL240315C00175000")
+      {:ok, :exercised}
+
+  """
+  @spec exercise(String.t(), keyword()) :: {:ok, any()} | {:error, Alpa.Error.t()}
+  def exercise(symbol_or_contract_id, opts \\ []) do
+    encoded = URI.encode_www_form(symbol_or_contract_id)
+    Client.post("/v2/positions/#{encoded}/exercise", nil, opts)
+  end
 end
