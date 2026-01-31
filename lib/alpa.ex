@@ -41,6 +41,7 @@ defmodule Alpa do
     * `Alpa.MarketData.Quotes` - Quote (NBBO) data
     * `Alpa.MarketData.Trades` - Trade data
     * `Alpa.MarketData.Snapshots` - Market snapshots
+    * `Alpa.Crypto.MarketData` - Crypto market data (bars, quotes, trades, snapshots)
     * `Alpa.Crypto.Funding` - Crypto wallets and transfers
 
   ## Configuration
@@ -55,6 +56,7 @@ defmodule Alpa do
   """
 
   alias Alpa.Crypto.Funding
+  alias Alpa.Crypto.MarketData, as: CryptoMarketData
   alias Alpa.MarketData.{Bars, Quotes, Snapshots, Trades}
   alias Alpa.Trading.{Account, Assets, CorporateActions, Market, Orders, Positions, Watchlists}
 
@@ -332,6 +334,59 @@ defmodule Alpa do
   See `Alpa.MarketData.Snapshots.get_multi/2` for details.
   """
   defdelegate snapshots(symbols, opts \\ []), to: Snapshots, as: :get_multi
+
+  # ============================================================================
+  # Crypto Market Data
+  # ============================================================================
+
+  @doc """
+  Get historical crypto bars for a symbol.
+
+  See `Alpa.Crypto.MarketData.bars/2` for details.
+  """
+  defdelegate crypto_bars(symbol, opts \\ []), to: CryptoMarketData, as: :bars
+
+  @doc """
+  Get latest crypto bars for a symbol.
+
+  See `Alpa.Crypto.MarketData.latest_bars/2` for details.
+  """
+  defdelegate crypto_latest_bars(symbol, opts \\ []), to: CryptoMarketData, as: :latest_bars
+
+  @doc """
+  Get historical crypto quotes for a symbol.
+
+  See `Alpa.Crypto.MarketData.quotes/2` for details.
+  """
+  defdelegate crypto_quotes(symbol, opts \\ []), to: CryptoMarketData, as: :quotes
+
+  @doc """
+  Get latest crypto quotes for a symbol.
+
+  See `Alpa.Crypto.MarketData.latest_quotes/2` for details.
+  """
+  defdelegate crypto_latest_quotes(symbol, opts \\ []), to: CryptoMarketData, as: :latest_quotes
+
+  @doc """
+  Get historical crypto trades for a symbol.
+
+  See `Alpa.Crypto.MarketData.trades/2` for details.
+  """
+  defdelegate crypto_trades(symbol, opts \\ []), to: CryptoMarketData, as: :trades
+
+  @doc """
+  Get latest crypto trades for a symbol.
+
+  See `Alpa.Crypto.MarketData.latest_trades/2` for details.
+  """
+  defdelegate crypto_latest_trades(symbol, opts \\ []), to: CryptoMarketData, as: :latest_trades
+
+  @doc """
+  Get crypto snapshots for one or more symbols.
+
+  See `Alpa.Crypto.MarketData.snapshots/2` for details.
+  """
+  defdelegate crypto_snapshots(symbols, opts \\ []), to: CryptoMarketData, as: :snapshots
 
   # ============================================================================
   # Crypto Funding
