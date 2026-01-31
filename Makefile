@@ -1,4 +1,4 @@
-.PHONY: setup compile test lint dialyzer check docs
+.PHONY: setup compile test lint dialyzer check docs docker-build docker-test
 
 setup:
 	mix deps.get
@@ -20,3 +20,9 @@ check: compile lint test dialyzer
 
 docs:
 	mix docs
+
+docker-build:
+	docker build -t alpa_ex .
+
+docker-test:
+	docker build -t alpa_ex . && docker run --rm alpa_ex

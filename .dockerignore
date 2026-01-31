@@ -1,0 +1,8 @@
+_build/
+deps/
+doc/
+cover/
+.git/
+*.ez
+.env
+.env.*
