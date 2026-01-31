@@ -70,7 +70,7 @@ defmodule Alpa.Pagination do
 
         {fetch_fn, opts, :initial} ->
           case fetch_fn.(opts) do
-            {:ok, results} when is_list(results) and length(results) > 0 ->
+            {:ok, [_ | _] = results} ->
               {results, {fetch_fn, opts, :continue}}
 
             {:ok, _} ->
@@ -98,11 +98,11 @@ defmodule Alpa.Pagination do
 
   defp do_fetch_all(fetch_fn, opts, acc, _max_pages, _page) do
     case fetch_fn.(opts) do
-      {:ok, results} when is_list(results) and length(results) > 0 ->
+      {:ok, [_ | _] = results} ->
         # If we got fewer results than the limit, we're on the last page
         limit = Keyword.get(opts, :limit, 50)
 
-        if length(results) < limit do
+        if Enum.count(results) < limit do
           {:ok, Enum.reverse(List.flatten([results | acc]))}
         else
           # For endpoints that support page_token, we'd extract it here
