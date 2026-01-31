@@ -372,5 +372,6 @@ MIT License - see [LICENSE](https://github.com/phiat/alpa_ex/blob/main/LICENSE) 
 
 ## Links
 
+- [Hex Docs](https://hexdocs.pm/alpa_ex)
 - [Alpaca API Documentation](https://docs.alpaca.markets/)
-- [GitHub Repository](https://github.com/phiat/alpa_ex)
+- [Previous version (alpa)](https://github.com/phiat/alpa)
