@@ -5,7 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.0] - 2026-01-31
+## [1.0.1] - 2026-01-31
+
+### Added
+
+- Facade delegates for `Alpa.Options.Contracts` (`option_contracts/1`, `option_contract/2`, `option_search/2`)
+- Facade delegates for `Alpa.Crypto.Trading` (`crypto_buy/3`, `crypto_sell/3`, `crypto_place_order/1`, `crypto_assets/1`, `crypto_positions/1`)
+- CI pipeline with formatting, credo --strict, and dialyzer checks
+- `.dialyzer_ignore.exs` for ExVCR/CaseTemplate compatibility
+
+### Fixed
+
+- Reduced cyclomatic complexity in `Client.request` and `Pagination.do_fetch_all`
+- Use implicit `try` in WebSocket modules (credo --strict compliance)
+- Alphabetized alias groups in crypto modules
+- Code formatting across all source files
+- Elixir version requirement lowered to `~> 1.14` (was `~> 1.16`)
+- LICENSE link in README uses absolute URL for HexDocs compatibility
+- `.gitignore` pattern for hex build tarballs (`*.tar`)
+- Documentation consistency across README, hex docs, and wiki
+
+### Changed
+
+- Minimum Elixir version: 1.14 (was 1.16)
+
+## [1.0.0] - 2026-01-10
 
 ### Added
 
