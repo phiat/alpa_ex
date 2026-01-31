@@ -123,8 +123,23 @@ defmodule Alpa.Trading.Positions do
 
   """
   @spec exercise(String.t(), keyword()) :: {:ok, any()} | {:error, Alpa.Error.t()}
-  def exercise(symbol_or_contract_id, opts \\ []) do
-    encoded = URI.encode_www_form(symbol_or_contract_id)
-    Client.post("/v2/positions/#{encoded}/exercise", nil, opts)
+  def exercise(symbol_or_asset_id, opts \\ []) do
+    encoded_symbol = URI.encode_www_form(symbol_or_asset_id)
+    Client.post("/v2/positions/#{encoded_symbol}/exercise", nil, opts)
+  end
+
+  @doc """
+  Decline to exercise an options position.
+
+  ## Examples
+
+      iex> Alpa.Trading.Positions.do_not_exercise("AAPL240315C00175000")
+      {:ok, :declined}
+
+  """
+  @spec do_not_exercise(String.t(), keyword()) :: {:ok, any()} | {:error, Alpa.Error.t()}
+  def do_not_exercise(symbol_or_asset_id, opts \\ []) do
+    encoded_symbol = URI.encode_www_form(symbol_or_asset_id)
+    Client.post("/v2/positions/#{encoded_symbol}/do_not_exercise", nil, opts)
   end
 end

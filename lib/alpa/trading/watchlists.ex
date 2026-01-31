@@ -109,7 +109,7 @@ defmodule Alpa.Trading.Watchlists do
       |> Keyword.take([:name, :symbols])
       |> Map.new()
 
-    case Client.patch("/v2/watchlists/#{watchlist_id}", body, params) do
+    case Client.put("/v2/watchlists/#{watchlist_id}", body, params) do
       {:ok, data} -> {:ok, Watchlist.from_map(data)}
       {:error, _} = error -> error
     end
