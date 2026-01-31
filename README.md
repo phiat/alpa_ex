@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="assets/alpa_ex.png" alt="Alpa" width="300">
+  <img src="assets/alpa_ex.png" alt="alpa_ex" width="300">
 </p>
 
-# Alpa
+# alpa_ex
 
 [![Hex.pm](https://img.shields.io/hexpm/v/alpa_ex.svg)](https://hex.pm/packages/alpa_ex)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-blue.svg)](https://hexdocs.pm/alpa_ex)
@@ -28,7 +28,7 @@ Commission-free stock, options, and crypto trading with real-time market data.
 
 ## Installation
 
-Add `alpa` to your list of dependencies in `mix.exs`:
+Add `alpa_ex` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
