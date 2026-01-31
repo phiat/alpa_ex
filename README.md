@@ -377,3 +377,4 @@ MIT License - see [LICENSE](https://github.com/phiat/alpa_ex/blob/main/LICENSE) 
 - [Hex Docs](https://hexdocs.pm/alpa_ex)
 - [Alpaca API Documentation](https://docs.alpaca.markets/)
 - [Previous version (alpa)](https://github.com/phiat/alpa)
+- [Task Tracking with Beads](https://github.com/steveyegge/beads) — AI-native issue tracker used for project planning
