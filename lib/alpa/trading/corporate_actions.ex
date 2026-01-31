@@ -7,27 +7,28 @@ defmodule Alpa.Trading.CorporateActions do
   """
 
   alias Alpa.Client
+  alias Alpa.Models.CorporateAction
 
   @doc """
-  List corporate action announcements.
+  Get corporate action announcements.
 
   ## Options
 
-    * `:ca_types` - List of types: "dividend", "merger", "spinoff", "split"
-    * `:since` - Filter announcements since date (YYYY-MM-DD)
-    * `:until` - Filter announcements until date (YYYY-MM-DD)
+    * `:ca_types` - Filter by type (e.g., ["dividend", "split"])
+    * `:since` - Filter since date (format: "YYYY-MM-DD")
+    * `:until` - Filter until date (format: "YYYY-MM-DD")
     * `:symbol` - Filter by symbol
     * `:cusip` - Filter by CUSIP
-    * `:date_type` - Date type for since/until filter ("declaration", "ex", "record", "payable")
+    * `:date_type` - Date type to filter on ("declaration", "ex", "record", "payable")
 
   ## Examples
 
-      iex> Alpa.Trading.CorporateActions.list_announcements(ca_types: ["dividend"], symbol: "AAPL")
-      {:ok, [%{...}]}
+      iex> Alpa.Trading.CorporateActions.list(ca_types: ["dividend"], symbol: "AAPL")
+      {:ok, [%Alpa.Models.CorporateAction{...}]}
 
   """
-  @spec list_announcements(keyword()) :: {:ok, [map()]} | {:error, Alpa.Error.t()}
-  def list_announcements(opts \\ []) do
+  @spec list(keyword()) :: {:ok, [CorporateAction.t()]} | {:error, Alpa.Error.t()}
+  def list(opts \\ []) do
     params =
       opts
       |> Keyword.take([:ca_types, :since, :until, :symbol, :cusip, :date_type])
@@ -38,20 +39,27 @@ defmodule Alpa.Trading.CorporateActions do
       end)
       |> Map.new()
 
-    Client.get("/v2/corporate_actions/announcements", Keyword.put(opts, :params, params))
+    case Client.get("/v2/corporate_actions/announcements", Keyword.put(opts, :params, params)) do
+      {:ok, data} when is_list(data) -> {:ok, Enum.map(data, &CorporateAction.from_map/1)}
+      {:ok, unexpected} -> {:error, Alpa.Error.invalid_response(unexpected)}
+      {:error, _} = error -> error
+    end
   end
 
   @doc """
-  Get a specific corporate action announcement by ID.
+  Get a specific corporate action announcement.
 
   ## Examples
 
-      iex> Alpa.Trading.CorporateActions.get_announcement("announcement-id")
-      {:ok, %{...}}
+      iex> Alpa.Trading.CorporateActions.get("announcement-id")
+      {:ok, %Alpa.Models.CorporateAction{...}}
 
   """
-  @spec get_announcement(String.t(), keyword()) :: {:ok, map()} | {:error, Alpa.Error.t()}
-  def get_announcement(announcement_id, opts \\ []) do
-    Client.get("/v2/corporate_actions/announcements/#{announcement_id}", opts)
+  @spec get(String.t(), keyword()) :: {:ok, CorporateAction.t()} | {:error, Alpa.Error.t()}
+  def get(announcement_id, opts \\ []) do
+    case Client.get("/v2/corporate_actions/announcements/#{announcement_id}", opts) do
+      {:ok, data} -> {:ok, CorporateAction.from_map(data)}
+      {:error, _} = error -> error
+    end
   end
 end

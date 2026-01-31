@@ -54,7 +54,7 @@ defmodule Alpa do
   """
 
   alias Alpa.MarketData.{Bars, Quotes, Snapshots, Trades}
-  alias Alpa.Trading.{Account, Assets, Market, Orders, Positions, Watchlists}
+  alias Alpa.Trading.{Account, Assets, CorporateActions, Market, Orders, Positions, Watchlists}
 
   # ============================================================================
   # Account
@@ -215,6 +215,24 @@ defmodule Alpa do
   See `Alpa.Trading.Watchlists.delete/2` for details.
   """
   defdelegate delete_watchlist(watchlist_id, opts \\ []), to: Watchlists, as: :delete
+
+  # ============================================================================
+  # Corporate Actions
+  # ============================================================================
+
+  @doc """
+  Get corporate action announcements.
+
+  See `Alpa.Trading.CorporateActions.list/1` for details.
+  """
+  defdelegate corporate_actions(opts \\ []), to: CorporateActions, as: :list
+
+  @doc """
+  Get a specific corporate action announcement.
+
+  See `Alpa.Trading.CorporateActions.get/2` for details.
+  """
+  defdelegate corporate_action(id, opts \\ []), to: CorporateActions, as: :get
 
   # ============================================================================
   # Market

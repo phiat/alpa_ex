@@ -4,6 +4,7 @@ defmodule Alpa.Trading.Market do
   """
 
   alias Alpa.Client
+  alias Alpa.Models.Calendar
   alias Alpa.Models.Clock
 
   @doc """
@@ -66,7 +67,7 @@ defmodule Alpa.Trading.Market do
       ]}
 
   """
-  @spec get_calendar(keyword()) :: {:ok, [map()]} | {:error, Alpa.Error.t()}
+  @spec get_calendar(keyword()) :: {:ok, [Calendar.t()]} | {:error, Alpa.Error.t()}
   def get_calendar(opts \\ []) do
     params =
       opts
@@ -78,7 +79,11 @@ defmodule Alpa.Trading.Market do
       |> Enum.reject(fn {_, v} -> is_nil(v) end)
       |> Map.new()
 
-    Client.get("/v2/calendar", Keyword.put(opts, :params, params))
+    case Client.get("/v2/calendar", Keyword.put(opts, :params, params)) do
+      {:ok, data} when is_list(data) -> {:ok, Enum.map(data, &Calendar.from_map/1)}
+      {:ok, data} -> {:ok, data}
+      {:error, _} = error -> error
+    end
   end
 
   @doc """

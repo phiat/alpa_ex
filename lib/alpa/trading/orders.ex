@@ -154,7 +154,7 @@ defmodule Alpa.Trading.Orders do
   def get_by_client_id(client_order_id, opts \\ []) do
     params = %{client_order_id: client_order_id}
 
-    case Client.get("/v2/orders:by_client_order_id", Keyword.put(opts, :params, params)) do
+    case Client.get("/v2/orders/by_client_order_id", Keyword.put(opts, :params, params)) do
       {:ok, data} -> {:ok, Order.from_map(data)}
       {:error, _} = error -> error
     end

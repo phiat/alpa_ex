@@ -38,6 +38,14 @@ defmodule Alpa.Client do
   end
 
   @doc """
+  Make a PUT request to the trading API.
+  """
+  @spec put(String.t(), map(), keyword()) :: response()
+  def put(path, body, opts \\ []) do
+    request(:put, :trading, path, body, opts)
+  end
+
+  @doc """
   Make a DELETE request to the trading API.
   """
   @spec delete(String.t(), keyword()) :: response()
