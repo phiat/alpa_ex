@@ -193,40 +193,34 @@ defmodule Alpa.Pagination do
   defp do_fetch_all(fetch_fn, opts, data_key, acc, max_pages, page) do
     case fetch_fn.(opts) do
       {:ok, %{} = response} ->
-        {items, next_token} = extract_page(response, data_key)
-
-        new_acc =
-          case items do
-            [_ | _] -> [items | acc]
-            _ -> acc
-          end
-
-        case next_token do
-          token when is_binary(token) ->
-            next_opts = add_page_token(opts, token)
-            do_fetch_all(fetch_fn, next_opts, data_key, new_acc, max_pages, page + 1)
-
-          _ ->
-            {:ok, new_acc |> Enum.reverse() |> List.flatten()}
-        end
+        handle_map_response(fetch_fn, opts, data_key, acc, max_pages, page, response)
 
       {:ok, [_ | _] = results} ->
-        {:ok, [results | acc] |> Enum.reverse() |> List.flatten()}
-
-      {:ok, results} when is_list(results) ->
-        {:ok, acc |> Enum.reverse() |> List.flatten()}
+        finalize_acc([results | acc])
 
       {:ok, _} ->
-        {:ok, acc |> Enum.reverse() |> List.flatten()}
+        finalize_acc(acc)
 
       {:error, _} = error ->
-        if acc == [] do
-          error
-        else
-          {:ok, acc |> Enum.reverse() |> List.flatten()}
-        end
+        if acc == [], do: error, else: finalize_acc(acc)
     end
   end
+
+  defp handle_map_response(fetch_fn, opts, data_key, acc, max_pages, page, response) do
+    {items, next_token} = extract_page(response, data_key)
+    new_acc = if match?([_ | _], items), do: [items | acc], else: acc
+
+    case next_token do
+      token when is_binary(token) ->
+        next_opts = add_page_token(opts, token)
+        do_fetch_all(fetch_fn, next_opts, data_key, new_acc, max_pages, page + 1)
+
+      _ ->
+        finalize_acc(new_acc)
+    end
+  end
+
+  defp finalize_acc(acc), do: {:ok, acc |> Enum.reverse() |> List.flatten()}
 
   defp extract_page(response, data_key) do
     next_token = Map.get(response, "next_page_token")

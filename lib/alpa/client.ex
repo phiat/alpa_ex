@@ -73,14 +73,6 @@ defmodule Alpa.Client do
       url = base_url <> path
       metadata = %{method: method, api: api, path: path, url: url}
 
-      start_time = System.monotonic_time()
-
-      :telemetry.execute(
-        [:alpa, :request, :start],
-        %{system_time: System.system_time()},
-        metadata
-      )
-
       req_opts =
         [
           method: method,
@@ -94,45 +86,54 @@ defmodule Alpa.Client do
         |> maybe_add_body(body)
         |> maybe_add_params(opts)
 
-      result =
-        case Req.request(req_opts) do
-          {:ok, %Req.Response{status: 204}} ->
-            {:ok, :deleted}
-
-          {:ok, %Req.Response{status: status, body: body}} when status in 200..299 ->
-            {:ok, body}
-
-          {:ok, %Req.Response{status: status, body: body}} ->
-            {:error, Error.from_response(status, body)}
-
-          {:error, %Req.TransportError{reason: :timeout}} ->
-            {:error, Error.timeout_error()}
-
-          {:error, %Req.TransportError{reason: reason}} ->
-            {:error, Error.network_error(reason)}
-
-          {:error, exception} ->
-            {:error, Error.network_error(exception)}
-        end
-
-      duration = System.monotonic_time() - start_time
-
-      case result do
-        {:ok, _} ->
-          :telemetry.execute([:alpa, :request, :stop], %{duration: duration}, metadata)
-
-        {:error, error} ->
-          :telemetry.execute(
-            [:alpa, :request, :exception],
-            %{duration: duration},
-            Map.put(metadata, :error, error)
-          )
-      end
-
-      result
+      execute_with_telemetry(req_opts, metadata)
     else
       {:error, Error.missing_credentials()}
     end
+  end
+
+  defp execute_with_telemetry(req_opts, metadata) do
+    start_time = System.monotonic_time()
+    :telemetry.execute([:alpa, :request, :start], %{system_time: System.system_time()}, metadata)
+
+    result = do_request(req_opts)
+    duration = System.monotonic_time() - start_time
+    emit_telemetry_stop(result, duration, metadata)
+    result
+  end
+
+  defp do_request(req_opts) do
+    case Req.request(req_opts) do
+      {:ok, %Req.Response{status: 204}} ->
+        {:ok, :deleted}
+
+      {:ok, %Req.Response{status: status, body: body}} when status in 200..299 ->
+        {:ok, body}
+
+      {:ok, %Req.Response{status: status, body: body}} ->
+        {:error, Error.from_response(status, body)}
+
+      {:error, %Req.TransportError{reason: :timeout}} ->
+        {:error, Error.timeout_error()}
+
+      {:error, %Req.TransportError{reason: reason}} ->
+        {:error, Error.network_error(reason)}
+
+      {:error, exception} ->
+        {:error, Error.network_error(exception)}
+    end
+  end
+
+  defp emit_telemetry_stop({:ok, _}, duration, metadata) do
+    :telemetry.execute([:alpa, :request, :stop], %{duration: duration}, metadata)
+  end
+
+  defp emit_telemetry_stop({:error, error}, duration, metadata) do
+    :telemetry.execute(
+      [:alpa, :request, :exception],
+      %{duration: duration},
+      Map.put(metadata, :error, error)
+    )
   end
 
   # Private helpers

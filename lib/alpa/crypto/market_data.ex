@@ -13,7 +13,7 @@ defmodule Alpa.Crypto.MarketData do
   """
 
   alias Alpa.Client
-  alias Alpa.Models.{Bar, Quote, Trade, Snapshot}
+  alias Alpa.Models.{Bar, Quote, Snapshot, Trade}
 
   @default_loc "us"
 

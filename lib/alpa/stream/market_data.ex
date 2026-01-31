@@ -165,14 +165,12 @@ defmodule Alpa.Stream.MarketData do
   """
   @spec connection_status(pid()) :: :connected | :disconnected | :connecting
   def connection_status(pid) do
-    try do
-      state = :sys.get_state(pid)
-      state.connection_status
-    rescue
-      _ -> :disconnected
-    catch
-      :exit, _ -> :disconnected
-    end
+    state = :sys.get_state(pid)
+    state.connection_status
+  rescue
+    _ -> :disconnected
+  catch
+    :exit, _ -> :disconnected
   end
 
   # WebSockex Callbacks
@@ -391,30 +389,28 @@ defmodule Alpa.Stream.MarketData do
   end
 
   defp invoke_callback(event, state) do
-    try do
-      case state.callback do
-        fun when is_function(fun, 1) ->
-          fun.(event)
+    case state.callback do
+      fun when is_function(fun, 1) ->
+        fun.(event)
 
-        {mod, fun, args} ->
-          apply(mod, fun, [event | args])
+      {mod, fun, args} ->
+        apply(mod, fun, [event | args])
+    end
+
+    %{state | consecutive_callback_errors: 0}
+  rescue
+    error ->
+      new_count = state.consecutive_callback_errors + 1
+
+      if new_count >= 10 do
+        Logger.error(
+          "[MarketData] #{new_count} consecutive callback errors, latest: #{inspect(error)}"
+        )
+      else
+        Logger.error("[MarketData] Callback error: #{inspect(error)}")
       end
 
-      %{state | consecutive_callback_errors: 0}
-    rescue
-      error ->
-        new_count = state.consecutive_callback_errors + 1
-
-        if new_count >= 10 do
-          Logger.error(
-            "[MarketData] #{new_count} consecutive callback errors, latest: #{inspect(error)}"
-          )
-        else
-          Logger.error("[MarketData] Callback error: #{inspect(error)}")
-        end
-
-        %{state | consecutive_callback_errors: new_count}
-    end
+      %{state | consecutive_callback_errors: new_count}
   end
 
   defp merge_subscriptions(current, new) do

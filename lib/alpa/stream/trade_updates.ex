@@ -134,14 +134,12 @@ defmodule Alpa.Stream.TradeUpdates do
   """
   @spec connection_status(pid()) :: :connected | :disconnected | :connecting
   def connection_status(pid) do
-    try do
-      state = :sys.get_state(pid)
-      state.connection_status
-    rescue
-      _ -> :disconnected
-    catch
-      :exit, _ -> :disconnected
-    end
+    state = :sys.get_state(pid)
+    state.connection_status
+  rescue
+    _ -> :disconnected
+  catch
+    :exit, _ -> :disconnected
   end
 
   # WebSockex Callbacks

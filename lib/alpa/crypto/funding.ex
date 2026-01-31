@@ -6,7 +6,7 @@ defmodule Alpa.Crypto.Funding do
   """
 
   alias Alpa.Client
-  alias Alpa.Models.{CryptoWallet, CryptoTransfer}
+  alias Alpa.Models.{CryptoTransfer, CryptoWallet}
 
   @doc """
   List crypto wallets.
