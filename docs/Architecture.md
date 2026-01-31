@@ -30,10 +30,9 @@ lib/
 │   ├── options/
 │   │   └── contracts.ex           # Option contract search
 │   ├── crypto/
-│   │   ├── funding.ex             # Crypto wallets and transfers
 │   │   ├── trading.ex             # Crypto-specific trading helpers
 │   │   ├── market_data.ex         # Crypto bars, quotes, trades, snapshots, orderbook
-│   │   └── funding.ex             # Crypto transfers and wallets
+│   │   └── funding.ex             # Crypto wallets and transfers
 │   └── models/
 │       ├── account.ex             # Account struct
 │       ├── account_config.ex      # Account configuration struct

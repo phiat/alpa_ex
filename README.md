@@ -24,7 +24,7 @@ Commission-free stock, options, and crypto trading with real-time market data.
 - **Corporate Actions** - Announcements and corporate action tracking
 - **Pagination Helpers** - Eager `all/2` and lazy `stream/2` for paginated endpoints
 - **Telemetry** - Built-in `:telemetry` events for observability
-- **Modern Stack** - Elixir 1.16+, Req HTTP client, WebSockex
+- **Modern Stack** - Elixir 1.14+, Req HTTP client, WebSockex
 
 ## Installation
 

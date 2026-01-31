@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- Elixir 1.16+
+- Elixir 1.14+
 - An Alpaca Markets account ([sign up free](https://alpaca.markets/))
 - API keys from the Alpaca dashboard
 
@@ -74,12 +74,15 @@ IO.puts("Buying power: $#{account.buying_power}")
 ## Crypto Trading
 
 ```elixir
-# Buy crypto
-{:ok, order} = Alpa.Crypto.Trading.buy("BTC/USD", notional: "100.00")
+# Buy crypto by quantity
+{:ok, order} = Alpa.Crypto.Trading.buy("BTC/USD", "0.001")
+
+# Buy crypto by dollar amount
+{:ok, order} = Alpa.Crypto.Trading.buy_notional("BTC/USD", "100")
 
 # Get crypto market data
-{:ok, bars} = Alpa.Crypto.MarketData.get_bars("BTC/USD", timeframe: "1Hour")
-{:ok, snapshot} = Alpa.Crypto.MarketData.get_snapshots(["BTC/USD", "ETH/USD"])
+{:ok, bars} = Alpa.Crypto.MarketData.bars("BTC/USD", timeframe: "1Hour")
+{:ok, snapshots} = Alpa.Crypto.MarketData.snapshots(["BTC/USD", "ETH/USD"])
 ```
 
 ## Pagination
@@ -140,4 +143,4 @@ end
 - [Architecture](Architecture.md) -- Understand the module structure and design
 - [API Coverage](API-Coverage.md) -- See all supported endpoints
 - [Trading Strategies](Trading-Strategies.md) -- Example trading patterns
-- [Contributing](Contributing.md) -- Help improve AlpaEx
+- [Contributing](Contributing.md) -- Help improve alpa_ex

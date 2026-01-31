@@ -31,20 +31,23 @@ defmodule Alpa do
 
   For more advanced usage, use the specific modules:
 
-    * `Alpa.Trading.Account` - Account information and configuration
+    * `Alpa.Trading.Account` - Account info, config, activities, portfolio history
     * `Alpa.Trading.Orders` - Order placement and management
     * `Alpa.Trading.Positions` - Position management
     * `Alpa.Trading.Assets` - Asset information
-    * `Alpa.Trading.Watchlists` - Watchlist management
+    * `Alpa.Trading.Watchlists` - Watchlist CRUD
     * `Alpa.Trading.Market` - Market clock and calendar
+    * `Alpa.Trading.CorporateActions` - Corporate action announcements
     * `Alpa.MarketData.Bars` - Historical bar data
-    * `Alpa.MarketData.Quotes` - Quote (NBBO) data
-    * `Alpa.MarketData.Trades` - Trade data
+    * `Alpa.MarketData.Quotes` - Historical quote data
+    * `Alpa.MarketData.Trades` - Historical trade data
     * `Alpa.MarketData.Snapshots` - Market snapshots
-    * `Alpa.Crypto.Trading` - Crypto trading (orders, positions, assets)
-    * `Alpa.Crypto.MarketData` - Crypto market data (bars, quotes, trades, snapshots)
-    * `Alpa.Crypto.Funding` - Crypto wallets and transfers
-    * `Alpa.Options.Contracts` - Options contract search and lookup
+    * `Alpa.Stream.TradeUpdates` - Real-time trade updates
+    * `Alpa.Stream.MarketData` - Real-time market data
+    * `Alpa.Options.Contracts` - Options contract search
+    * `Alpa.Crypto.Trading` - Crypto trading operations
+    * `Alpa.Crypto.MarketData` - Crypto bars, quotes, trades, snapshots, order books
+    * `Alpa.Crypto.Funding` - Crypto transfers and wallets
 
   ## Configuration
 
