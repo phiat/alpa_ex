@@ -5,6 +5,9 @@ defmodule Alpa.Trading.Account do
 
   alias Alpa.Client
   alias Alpa.Models.Account
+  alias Alpa.Models.AccountConfig
+  alias Alpa.Models.Activity
+  alias Alpa.Models.PortfolioHistory
 
   @doc """
   Get account information.
@@ -47,9 +50,12 @@ defmodule Alpa.Trading.Account do
       }}
 
   """
-  @spec get_configurations(keyword()) :: {:ok, map()} | {:error, Alpa.Error.t()}
+  @spec get_configurations(keyword()) :: {:ok, AccountConfig.t()} | {:error, Alpa.Error.t()}
   def get_configurations(opts \\ []) do
-    Client.get("/v2/account/configurations", opts)
+    case Client.get("/v2/account/configurations", opts) do
+      {:ok, data} -> {:ok, AccountConfig.from_map(data)}
+      {:error, _} = error -> error
+    end
   end
 
   @doc """
@@ -112,7 +118,7 @@ defmodule Alpa.Trading.Account do
       {:ok, [%{...}]}
 
   """
-  @spec get_activities(keyword()) :: {:ok, [map()]} | {:error, Alpa.Error.t()}
+  @spec get_activities(keyword()) :: {:ok, [Activity.t()]} | {:error, Alpa.Error.t()}
   def get_activities(opts \\ []) do
     params =
       opts
@@ -124,7 +130,10 @@ defmodule Alpa.Trading.Account do
       end)
       |> Map.new()
 
-    Client.get("/v2/account/activities", Keyword.put(opts, :params, params))
+    case Client.get("/v2/account/activities", Keyword.put(opts, :params, params)) do
+      {:ok, data} when is_list(data) -> {:ok, Enum.map(data, &Activity.from_map/1)}
+      {:error, _} = error -> error
+    end
   end
 
   @doc """
@@ -150,7 +159,7 @@ defmodule Alpa.Trading.Account do
       {:ok, [%{...}]}
 
   """
-  @spec get_activities_by_type(String.t(), keyword()) :: {:ok, [map()]} | {:error, Alpa.Error.t()}
+  @spec get_activities_by_type(String.t(), keyword()) :: {:ok, [Activity.t()]} | {:error, Alpa.Error.t()}
   def get_activities_by_type(activity_type, opts \\ []) do
     params =
       opts
@@ -158,7 +167,10 @@ defmodule Alpa.Trading.Account do
       |> Enum.reject(fn {_, v} -> is_nil(v) end)
       |> Map.new()
 
-    Client.get("/v2/account/activities/#{activity_type}", Keyword.put(opts, :params, params))
+    case Client.get("/v2/account/activities/#{activity_type}", Keyword.put(opts, :params, params)) do
+      {:ok, data} when is_list(data) -> {:ok, Enum.map(data, &Activity.from_map/1)}
+      {:error, _} = error -> error
+    end
   end
 
   @doc """
@@ -189,7 +201,7 @@ defmodule Alpa.Trading.Account do
       }}
 
   """
-  @spec get_portfolio_history(keyword()) :: {:ok, map()} | {:error, Alpa.Error.t()}
+  @spec get_portfolio_history(keyword()) :: {:ok, PortfolioHistory.t()} | {:error, Alpa.Error.t()}
   def get_portfolio_history(opts \\ []) do
     params =
       opts
@@ -197,6 +209,9 @@ defmodule Alpa.Trading.Account do
       |> Enum.reject(fn {_, v} -> is_nil(v) end)
       |> Map.new()
 
-    Client.get("/v2/account/portfolio/history", Keyword.put(opts, :params, params))
+    case Client.get("/v2/account/portfolio/history", Keyword.put(opts, :params, params)) do
+      {:ok, data} -> {:ok, PortfolioHistory.from_map(data)}
+      {:error, _} = error -> error
+    end
   end
 end
