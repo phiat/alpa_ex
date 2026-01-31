@@ -18,7 +18,10 @@ defmodule Alpa.MixProject do
       name: "AlpaEx",
       source_url: @source_url,
       homepage_url: @source_url,
-      dialyzer: [plt_add_apps: [:mix]],
+      dialyzer: [
+        plt_add_apps: [:mix, :ex_unit],
+        ignore_warnings: ".dialyzer_ignore.exs"
+      ],
       test_coverage: [tool: ExCoveralls]
     ]
   end
