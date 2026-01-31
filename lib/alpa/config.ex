@@ -62,12 +62,21 @@ defmodule Alpa.Config do
   """
   @spec new(keyword()) :: t()
   def new(opts \\ []) do
+    trading_url = get_trading_url(opts)
+
+    use_paper =
+      if Keyword.has_key?(opts, :trading_url) do
+        String.contains?(trading_url, "paper")
+      else
+        get_opt(opts, :use_paper, true)
+      end
+
     %__MODULE__{
       api_key: get_opt(opts, :api_key),
       api_secret: get_opt(opts, :api_secret),
-      trading_url: get_trading_url(opts),
+      trading_url: trading_url,
       data_url: get_opt(opts, :data_url, "https://data.alpaca.markets"),
-      use_paper: get_opt(opts, :use_paper, true),
+      use_paper: use_paper,
       timeout: get_opt(opts, :timeout, 30_000),
       receive_timeout: get_opt(opts, :receive_timeout, 30_000)
     }

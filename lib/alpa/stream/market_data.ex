@@ -49,8 +49,18 @@ defmodule Alpa.Stream.MarketData do
   @initial_backoff_ms 1_000
   @jitter_min 0.5
   @jitter_max 1.5
+  @default_max_reconnect_attempts 50
 
-  defstruct [:callback, :config, :authenticated, :subscriptions, :connection_status, reconnect_attempts: 0]
+  defstruct [
+    :callback,
+    :config,
+    :authenticated,
+    :subscriptions,
+    :connection_status,
+    reconnect_attempts: 0,
+    max_reconnect_attempts: @default_max_reconnect_attempts,
+    consecutive_callback_errors: 0
+  ]
 
   @type callback :: (map() -> any()) | {module(), atom(), list()}
   @type subscription_type :: :trades | :quotes | :bars
@@ -80,6 +90,8 @@ defmodule Alpa.Stream.MarketData do
     config = Config.new(opts)
     feed = Keyword.get(opts, :feed, "iex")
 
+    max_reconnect = Keyword.get(opts, :max_reconnect_attempts, @default_max_reconnect_attempts)
+
     if Config.has_credentials?(config) do
       url = if feed == "sip", do: @sip_stream_url, else: @iex_stream_url
 
@@ -89,7 +101,9 @@ defmodule Alpa.Stream.MarketData do
         authenticated: false,
         subscriptions: %{trades: [], quotes: [], bars: []},
         connection_status: :connecting,
-        reconnect_attempts: 0
+        reconnect_attempts: 0,
+        max_reconnect_attempts: max_reconnect,
+        consecutive_callback_errors: 0
       }
 
       ws_opts =
@@ -151,9 +165,14 @@ defmodule Alpa.Stream.MarketData do
   """
   @spec connection_status(pid()) :: :connected | :disconnected | :connecting
   def connection_status(pid) do
-    # Use :sys.get_state to read the WebSockex process state
-    state = :sys.get_state(pid)
-    state.connection_status
+    try do
+      state = :sys.get_state(pid)
+      state.connection_status
+    rescue
+      _ -> :disconnected
+    catch
+      :exit, _ -> :disconnected
+    end
   end
 
   # WebSockex Callbacks
@@ -267,12 +286,16 @@ defmodule Alpa.Stream.MarketData do
     Logger.warning("[MarketData] Disconnected: #{inspect(reason)}")
 
     new_attempts = state.reconnect_attempts + 1
-    delay = reconnect_delay(new_attempts)
 
-    Logger.info("[MarketData] Reconnecting in #{delay}ms (attempt #{new_attempts})")
-    Process.send_after(self(), :reconnect, delay)
-
-    {:ok, %{state | authenticated: false, connection_status: :disconnected, reconnect_attempts: new_attempts}}
+    if new_attempts >= state.max_reconnect_attempts do
+      Logger.warning("[MarketData] Max reconnect attempts (#{state.max_reconnect_attempts}) reached, giving up")
+      {:ok, %{state | authenticated: false, connection_status: :disconnected, reconnect_attempts: new_attempts}}
+    else
+      delay = reconnect_delay(new_attempts)
+      Logger.info("[MarketData] Reconnecting in #{delay}ms (attempt #{new_attempts})")
+      Process.send_after(self(), :reconnect, delay)
+      {:ok, %{state | authenticated: false, connection_status: :disconnected, reconnect_attempts: new_attempts}}
+    end
   end
 
   @impl WebSockex
@@ -296,7 +319,8 @@ defmodule Alpa.Stream.MarketData do
       send(self(), :resubscribe)
     end
 
-    %{state | authenticated: true, connection_status: :connected, reconnect_attempts: 0}
+    redacted_config = %{state.config | api_key: :redacted, api_secret: :redacted}
+    %{state | authenticated: true, connection_status: :connected, reconnect_attempts: 0, config: redacted_config}
   end
 
   defp handle_message(%{"T" => "error", "code" => code, "msg" => msg}, state) do
@@ -313,21 +337,18 @@ defmodule Alpa.Stream.MarketData do
     # Trade
     event = %{type: :trade, data: Trade.from_map(data)}
     invoke_callback(event, state)
-    state
   end
 
   defp handle_message(%{"T" => "q"} = data, state) do
     # Quote
     event = %{type: :quote, data: Quote.from_map(data)}
     invoke_callback(event, state)
-    state
   end
 
   defp handle_message(%{"T" => "b"} = data, state) do
     # Bar
     event = %{type: :bar, data: Bar.from_map(data)}
     invoke_callback(event, state)
-    state
   end
 
   defp handle_message(msg, state) do
@@ -344,16 +365,28 @@ defmodule Alpa.Stream.MarketData do
   end
 
   defp invoke_callback(event, state) do
-    case state.callback do
-      fun when is_function(fun, 1) ->
-        fun.(event)
+    try do
+      case state.callback do
+        fun when is_function(fun, 1) ->
+          fun.(event)
 
-      {mod, fun, args} ->
-        apply(mod, fun, [event | args])
+        {mod, fun, args} ->
+          apply(mod, fun, [event | args])
+      end
+
+      %{state | consecutive_callback_errors: 0}
+    rescue
+      error ->
+        new_count = state.consecutive_callback_errors + 1
+
+        if new_count >= 10 do
+          Logger.error("[MarketData] #{new_count} consecutive callback errors, latest: #{inspect(error)}")
+        else
+          Logger.error("[MarketData] Callback error: #{inspect(error)}")
+        end
+
+        %{state | consecutive_callback_errors: new_count}
     end
-  rescue
-    error ->
-      Logger.error("[MarketData] Callback error: #{inspect(error)}")
   end
 
   defp merge_subscriptions(current, new) do
