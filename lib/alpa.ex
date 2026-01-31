@@ -41,6 +41,7 @@ defmodule Alpa do
     * `Alpa.MarketData.Quotes` - Quote (NBBO) data
     * `Alpa.MarketData.Trades` - Trade data
     * `Alpa.MarketData.Snapshots` - Market snapshots
+    * `Alpa.Crypto.Funding` - Crypto wallets and transfers
 
   ## Configuration
 
@@ -53,6 +54,7 @@ defmodule Alpa do
   See `Alpa.Config` for details.
   """
 
+  alias Alpa.Crypto.Funding
   alias Alpa.MarketData.{Bars, Quotes, Snapshots, Trades}
   alias Alpa.Trading.{Account, Assets, CorporateActions, Market, Orders, Positions, Watchlists}
 
@@ -330,4 +332,36 @@ defmodule Alpa do
   See `Alpa.MarketData.Snapshots.get_multi/2` for details.
   """
   defdelegate snapshots(symbols, opts \\ []), to: Snapshots, as: :get_multi
+
+  # ============================================================================
+  # Crypto Funding
+  # ============================================================================
+
+  @doc """
+  List crypto wallets.
+
+  See `Alpa.Crypto.Funding.list_wallets/1` for details.
+  """
+  defdelegate crypto_wallets(opts \\ []), to: Funding, as: :list_wallets
+
+  @doc """
+  List crypto funding transfers.
+
+  See `Alpa.Crypto.Funding.list_transfers/1` for details.
+  """
+  defdelegate crypto_transfers(opts \\ []), to: Funding, as: :list_transfers
+
+  @doc """
+  Get a specific crypto transfer.
+
+  See `Alpa.Crypto.Funding.get_transfer/2` for details.
+  """
+  defdelegate crypto_transfer(id, opts \\ []), to: Funding, as: :get_transfer
+
+  @doc """
+  Request a crypto withdrawal.
+
+  See `Alpa.Crypto.Funding.create_transfer/1` for details.
+  """
+  defdelegate crypto_withdraw(params), to: Funding, as: :create_transfer
 end
