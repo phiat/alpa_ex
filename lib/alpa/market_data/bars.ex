@@ -57,7 +57,8 @@ defmodule Alpa.MarketData.Bars do
       {:ok, %{"AAPL" => [%Alpa.Models.Bar{...}], "MSFT" => [%Alpa.Models.Bar{...}]}}
 
   """
-  @spec get_multi([String.t()], keyword()) :: {:ok, %{String.t() => [Bar.t()]}} | {:error, Alpa.Error.t()}
+  @spec get_multi([String.t()], keyword()) ::
+          {:ok, %{String.t() => [Bar.t()]}} | {:error, Alpa.Error.t()}
   def get_multi(symbols, opts \\ []) when is_list(symbols) do
     params =
       opts
@@ -93,7 +94,10 @@ defmodule Alpa.MarketData.Bars do
 
     encoded_symbol = URI.encode_www_form(symbol)
 
-    case Client.get_data("/v2/stocks/#{encoded_symbol}/bars/latest", Keyword.put(opts, :params, params)) do
+    case Client.get_data(
+           "/v2/stocks/#{encoded_symbol}/bars/latest",
+           Keyword.put(opts, :params, params)
+         ) do
       {:ok, %{"bar" => bar}} -> {:ok, Bar.from_map(bar, symbol)}
       {:ok, unexpected} -> {:error, Alpa.Error.invalid_response(unexpected)}
       {:error, _} = error -> error
@@ -109,7 +113,8 @@ defmodule Alpa.MarketData.Bars do
       {:ok, %{"AAPL" => %Alpa.Models.Bar{...}, "MSFT" => %Alpa.Models.Bar{...}}}
 
   """
-  @spec latest_multi([String.t()], keyword()) :: {:ok, %{String.t() => Bar.t()}} | {:error, Alpa.Error.t()}
+  @spec latest_multi([String.t()], keyword()) ::
+          {:ok, %{String.t() => Bar.t()}} | {:error, Alpa.Error.t()}
   def latest_multi(symbols, opts \\ []) when is_list(symbols) do
     params =
       opts

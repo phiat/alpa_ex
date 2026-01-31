@@ -5,13 +5,13 @@ defmodule Alpa.Models.PortfolioHistory do
   use TypedStruct
 
   typedstruct do
-    field :timestamp, [integer()]
-    field :equity, [number() | nil]
-    field :profit_loss, [number() | nil]
-    field :profit_loss_pct, [number() | nil]
-    field :base_value, number()
-    field :base_value_asof, String.t()
-    field :timeframe, String.t()
+    field(:timestamp, [integer()])
+    field(:equity, [number() | nil])
+    field(:profit_loss, [number() | nil])
+    field(:profit_loss_pct, [number() | nil])
+    field(:base_value, number())
+    field(:base_value_asof, String.t())
+    field(:timeframe, String.t())
   end
 
   @spec from_map(map()) :: t()

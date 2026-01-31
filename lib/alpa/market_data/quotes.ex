@@ -32,7 +32,10 @@ defmodule Alpa.MarketData.Quotes do
     params = build_params(opts)
     encoded_symbol = URI.encode_www_form(symbol)
 
-    case Client.get_data("/v2/stocks/#{encoded_symbol}/quotes", Keyword.put(opts, :params, params)) do
+    case Client.get_data(
+           "/v2/stocks/#{encoded_symbol}/quotes",
+           Keyword.put(opts, :params, params)
+         ) do
       {:ok, data} -> {:ok, parse_quotes(data, symbol)}
       {:error, _} = error -> error
     end
@@ -92,7 +95,10 @@ defmodule Alpa.MarketData.Quotes do
 
     encoded_symbol = URI.encode_www_form(symbol)
 
-    case Client.get_data("/v2/stocks/#{encoded_symbol}/quotes/latest", Keyword.put(opts, :params, params)) do
+    case Client.get_data(
+           "/v2/stocks/#{encoded_symbol}/quotes/latest",
+           Keyword.put(opts, :params, params)
+         ) do
       {:ok, %{"quote" => quote}} -> {:ok, Quote.from_map(quote, symbol)}
       {:ok, unexpected} -> {:error, Alpa.Error.invalid_response(unexpected)}
       {:error, _} = error -> error
@@ -120,7 +126,9 @@ defmodule Alpa.MarketData.Quotes do
 
     case Client.get_data("/v2/stocks/quotes/latest", Keyword.put(opts, :params, params)) do
       {:ok, %{"quotes" => quotes}} ->
-        result = Map.new(quotes, fn {symbol, quote} -> {symbol, Quote.from_map(quote, symbol)} end)
+        result =
+          Map.new(quotes, fn {symbol, quote} -> {symbol, Quote.from_map(quote, symbol)} end)
+
         {:ok, result}
 
       {:ok, unexpected} ->

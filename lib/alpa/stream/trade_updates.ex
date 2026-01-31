@@ -188,7 +188,15 @@ defmodule Alpa.Stream.TradeUpdates do
         Logger.info("[TradeUpdates] Authenticated successfully")
         send(self(), :subscribe)
         redacted_config = %{state.config | api_key: :redacted, api_secret: :redacted}
-        {:ok, %{state | authenticated: true, connection_status: :connected, reconnect_attempts: 0, config: redacted_config}}
+
+        {:ok,
+         %{
+           state
+           | authenticated: true,
+             connection_status: :connected,
+             reconnect_attempts: 0,
+             config: redacted_config
+         }}
 
       {:ok, %{"stream" => "authorization", "data" => %{"status" => status}}} ->
         Logger.error("[TradeUpdates] Authentication failed: #{status}")
@@ -235,13 +243,29 @@ defmodule Alpa.Stream.TradeUpdates do
     new_attempts = state.reconnect_attempts + 1
 
     if new_attempts >= state.max_reconnect_attempts do
-      Logger.warning("[TradeUpdates] Max reconnect attempts (#{state.max_reconnect_attempts}) reached, giving up")
-      {:ok, %{state | authenticated: false, connection_status: :disconnected, reconnect_attempts: new_attempts}}
+      Logger.warning(
+        "[TradeUpdates] Max reconnect attempts (#{state.max_reconnect_attempts}) reached, giving up"
+      )
+
+      {:ok,
+       %{
+         state
+         | authenticated: false,
+           connection_status: :disconnected,
+           reconnect_attempts: new_attempts
+       }}
     else
       delay = reconnect_delay(new_attempts)
       Logger.info("[TradeUpdates] Reconnecting in #{delay}ms (attempt #{new_attempts})")
       Process.send_after(self(), :reconnect, delay)
-      {:ok, %{state | authenticated: false, connection_status: :disconnected, reconnect_attempts: new_attempts}}
+
+      {:ok,
+       %{
+         state
+         | authenticated: false,
+           connection_status: :disconnected,
+           reconnect_attempts: new_attempts
+       }}
     end
   end
 
@@ -277,7 +301,9 @@ defmodule Alpa.Stream.TradeUpdates do
         new_count = state.consecutive_callback_errors + 1
 
         if new_count >= 10 do
-          Logger.error("[TradeUpdates] #{new_count} consecutive callback errors, latest: #{inspect(error)}")
+          Logger.error(
+            "[TradeUpdates] #{new_count} consecutive callback errors, latest: #{inspect(error)}"
+          )
         else
           Logger.error("[TradeUpdates] Callback error: #{inspect(error)}")
         end
@@ -303,5 +329,4 @@ defmodule Alpa.Stream.TradeUpdates do
   defp parse_order(order) do
     Order.from_map(order)
   end
-
 end

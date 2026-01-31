@@ -6,22 +6,22 @@ defmodule Alpa.Models.Activity do
   import Alpa.Helpers, only: [parse_decimal: 1, parse_datetime: 1, parse_date: 1]
 
   typedstruct do
-    field :id, String.t()
-    field :activity_type, String.t()
-    field :date, Date.t()
-    field :net_amount, Decimal.t()
-    field :symbol, String.t()
-    field :qty, Decimal.t()
-    field :per_share_amount, Decimal.t()
-    field :price, Decimal.t()
-    field :cum_qty, Decimal.t()
-    field :leaves_qty, Decimal.t()
-    field :side, String.t()
-    field :type, String.t()
-    field :order_id, String.t()
-    field :transaction_time, DateTime.t()
-    field :description, String.t()
-    field :status, String.t()
+    field(:id, String.t())
+    field(:activity_type, String.t())
+    field(:date, Date.t())
+    field(:net_amount, Decimal.t())
+    field(:symbol, String.t())
+    field(:qty, Decimal.t())
+    field(:per_share_amount, Decimal.t())
+    field(:price, Decimal.t())
+    field(:cum_qty, Decimal.t())
+    field(:leaves_qty, Decimal.t())
+    field(:side, String.t())
+    field(:type, String.t())
+    field(:order_id, String.t())
+    field(:transaction_time, DateTime.t())
+    field(:description, String.t())
+    field(:status, String.t())
   end
 
   @spec from_map(map()) :: t()
@@ -45,5 +45,4 @@ defmodule Alpa.Models.Activity do
       status: data["status"]
     }
   end
-
 end

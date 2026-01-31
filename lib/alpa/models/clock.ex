@@ -5,10 +5,10 @@ defmodule Alpa.Models.Clock do
   use TypedStruct
 
   typedstruct do
-    field :timestamp, DateTime.t()
-    field :is_open, boolean()
-    field :next_open, DateTime.t()
-    field :next_close, DateTime.t()
+    field(:timestamp, DateTime.t())
+    field(:is_open, boolean())
+    field(:next_open, DateTime.t())
+    field(:next_close, DateTime.t())
   end
 
   @doc """

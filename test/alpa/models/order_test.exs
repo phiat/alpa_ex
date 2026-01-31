@@ -306,11 +306,13 @@ defmodule Alpa.Models.OrderTest do
     end
 
     test "parses trailing stop values" do
-      order = Order.from_map(%{
-        "trail_percent" => "1.5",
-        "trail_price" => "5.00",
-        "hwm" => "190.00"
-      })
+      order =
+        Order.from_map(%{
+          "trail_percent" => "1.5",
+          "trail_price" => "5.00",
+          "hwm" => "190.00"
+        })
+
       assert Decimal.eq?(order.trail_percent, Decimal.new("1.5"))
       assert Decimal.eq?(order.trail_price, Decimal.new("5.00"))
       assert Decimal.eq?(order.hwm, Decimal.new("190.00"))

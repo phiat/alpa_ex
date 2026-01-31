@@ -9,22 +9,22 @@ defmodule Alpa.Models.OptionContract do
   @type option_style :: :american | :european
 
   typedstruct do
-    field :id, String.t()
-    field :symbol, String.t()
-    field :name, String.t()
-    field :status, String.t()
-    field :tradable, boolean()
-    field :expiration_date, Date.t()
-    field :strike_price, Decimal.t()
-    field :type, option_type()
-    field :style, option_style()
-    field :root_symbol, String.t()
-    field :underlying_symbol, String.t()
-    field :underlying_asset_id, String.t()
-    field :open_interest, integer()
-    field :open_interest_date, Date.t()
-    field :close_price, Decimal.t()
-    field :close_price_date, Date.t()
+    field(:id, String.t())
+    field(:symbol, String.t())
+    field(:name, String.t())
+    field(:status, String.t())
+    field(:tradable, boolean())
+    field(:expiration_date, Date.t())
+    field(:strike_price, Decimal.t())
+    field(:type, option_type())
+    field(:style, option_style())
+    field(:root_symbol, String.t())
+    field(:underlying_symbol, String.t())
+    field(:underlying_asset_id, String.t())
+    field(:open_interest, integer())
+    field(:open_interest_date, Date.t())
+    field(:close_price, Decimal.t())
+    field(:close_price_date, Date.t())
   end
 
   @doc """

@@ -63,7 +63,8 @@ defmodule Alpa.Crypto.Funding do
       {:ok, %Alpa.Models.CryptoTransfer{...}}
 
   """
-  @spec get_transfer(String.t(), keyword()) :: {:ok, CryptoTransfer.t()} | {:error, Alpa.Error.t()}
+  @spec get_transfer(String.t(), keyword()) ::
+          {:ok, CryptoTransfer.t()} | {:error, Alpa.Error.t()}
   def get_transfer(transfer_id, opts \\ []) do
     case Client.get("/v2/crypto/funding/transfers/#{transfer_id}", opts) do
       {:ok, data} -> {:ok, CryptoTransfer.from_map(data)}

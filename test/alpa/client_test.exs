@@ -131,8 +131,8 @@ defmodule Alpa.ClientTest do
     end
 
     test "extracts code from body when present" do
-      error = Error.from_response(400, %{"message" => "Error", "code" => 40010001})
-      assert error.code == 40010001
+      error = Error.from_response(400, %{"message" => "Error", "code" => 40_010_001})
+      assert error.code == 40_010_001
     end
 
     test "falls back to status code when no code in body" do

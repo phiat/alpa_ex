@@ -5,14 +5,14 @@ defmodule Alpa.Models.AccountConfig do
   use TypedStruct
 
   typedstruct do
-    field :dtbp_check, String.t()
-    field :trade_confirm_email, String.t()
-    field :suspend_trade, boolean()
-    field :no_shorting, boolean()
-    field :fractional_trading, boolean()
-    field :max_margin_multiplier, String.t()
-    field :pdt_check, String.t()
-    field :ptp_no_exception_entry, boolean()
+    field(:dtbp_check, String.t())
+    field(:trade_confirm_email, String.t())
+    field(:suspend_trade, boolean())
+    field(:no_shorting, boolean())
+    field(:fractional_trading, boolean())
+    field(:max_margin_multiplier, String.t())
+    field(:pdt_check, String.t())
+    field(:ptp_no_exception_entry, boolean())
   end
 
   @spec from_map(map()) :: t()

@@ -57,7 +57,10 @@ defmodule Alpa.Trading.CorporateActions do
   """
   @spec get(String.t(), keyword()) :: {:ok, CorporateAction.t()} | {:error, Alpa.Error.t()}
   def get(announcement_id, opts \\ []) do
-    case Client.get("/v2/corporate_actions/announcements/#{URI.encode_www_form(announcement_id)}", opts) do
+    case Client.get(
+           "/v2/corporate_actions/announcements/#{URI.encode_www_form(announcement_id)}",
+           opts
+         ) do
       {:ok, data} -> {:ok, CorporateAction.from_map(data)}
       {:error, _} = error -> error
     end

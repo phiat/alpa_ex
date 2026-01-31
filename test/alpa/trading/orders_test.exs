@@ -6,15 +6,16 @@ defmodule Alpa.Trading.OrdersTest do
 
   describe "place/1" do
     test "requires credentials" do
-      result = Orders.place(
-        symbol: "AAPL",
-        qty: 10,
-        side: "buy",
-        type: "market",
-        time_in_force: "day",
-        api_key: nil,
-        api_secret: nil
-      )
+      result =
+        Orders.place(
+          symbol: "AAPL",
+          qty: 10,
+          side: "buy",
+          type: "market",
+          time_in_force: "day",
+          api_key: nil,
+          api_secret: nil
+        )
 
       assert {:error, %Error{type: :missing_credentials}} = result
     end

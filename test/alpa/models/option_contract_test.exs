@@ -85,11 +85,12 @@ defmodule Alpa.Models.OptionContractTest do
     end
 
     test "handles invalid date" do
-      contract = OptionContract.from_map(%{
-        "expiration_date" => "not-a-date",
-        "open_interest_date" => "invalid",
-        "close_price_date" => ""
-      })
+      contract =
+        OptionContract.from_map(%{
+          "expiration_date" => "not-a-date",
+          "open_interest_date" => "invalid",
+          "close_price_date" => ""
+        })
 
       assert contract.expiration_date == nil
       assert contract.open_interest_date == nil

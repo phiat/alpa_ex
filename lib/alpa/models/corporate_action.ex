@@ -6,21 +6,21 @@ defmodule Alpa.Models.CorporateAction do
   import Alpa.Helpers, only: [parse_decimal: 1, parse_date: 1]
 
   typedstruct do
-    field :id, String.t()
-    field :corporate_action_id, String.t()
-    field :ca_type, String.t()
-    field :ca_sub_type, String.t()
-    field :initiating_symbol, String.t()
-    field :initiating_original_cusip, String.t()
-    field :target_symbol, String.t()
-    field :target_original_cusip, String.t()
-    field :declaration_date, Date.t()
-    field :ex_date, Date.t()
-    field :record_date, Date.t()
-    field :payable_date, Date.t()
-    field :cash, Decimal.t()
-    field :old_rate, Decimal.t()
-    field :new_rate, Decimal.t()
+    field(:id, String.t())
+    field(:corporate_action_id, String.t())
+    field(:ca_type, String.t())
+    field(:ca_sub_type, String.t())
+    field(:initiating_symbol, String.t())
+    field(:initiating_original_cusip, String.t())
+    field(:target_symbol, String.t())
+    field(:target_original_cusip, String.t())
+    field(:declaration_date, Date.t())
+    field(:ex_date, Date.t())
+    field(:record_date, Date.t())
+    field(:payable_date, Date.t())
+    field(:cash, Decimal.t())
+    field(:old_rate, Decimal.t())
+    field(:new_rate, Decimal.t())
   end
 
   @spec from_map(map()) :: t()
@@ -43,5 +43,4 @@ defmodule Alpa.Models.CorporateAction do
       new_rate: parse_decimal(data["new_rate"])
     }
   end
-
 end

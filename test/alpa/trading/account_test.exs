@@ -22,11 +22,12 @@ defmodule Alpa.Trading.AccountTest do
 
   describe "update_configurations/1" do
     test "requires credentials" do
-      result = Account.update_configurations(
-        suspend_trade: false,
-        api_key: nil,
-        api_secret: nil
-      )
+      result =
+        Account.update_configurations(
+          suspend_trade: false,
+          api_key: nil,
+          api_secret: nil
+        )
 
       assert {:error, %Error{type: :missing_credentials}} = result
     end

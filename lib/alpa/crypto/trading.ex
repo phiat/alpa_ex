@@ -223,7 +223,8 @@ defmodule Alpa.Crypto.Trading do
       {:ok, %Alpa.Models.Order{...}}
 
   """
-  @spec buy_notional(String.t(), String.t(), keyword()) :: {:ok, Order.t()} | {:error, Alpa.Error.t()}
+  @spec buy_notional(String.t(), String.t(), keyword()) ::
+          {:ok, Order.t()} | {:error, Alpa.Error.t()}
   def buy_notional(symbol, amount, opts \\ []) do
     place_order(
       Keyword.merge(opts,
@@ -245,7 +246,8 @@ defmodule Alpa.Crypto.Trading do
       {:ok, %Alpa.Models.Order{...}}
 
   """
-  @spec sell_notional(String.t(), String.t(), keyword()) :: {:ok, Order.t()} | {:error, Alpa.Error.t()}
+  @spec sell_notional(String.t(), String.t(), keyword()) ::
+          {:ok, Order.t()} | {:error, Alpa.Error.t()}
   def sell_notional(symbol, amount, opts \\ []) do
     place_order(
       Keyword.merge(opts,

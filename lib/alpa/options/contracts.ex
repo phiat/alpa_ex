@@ -51,11 +51,20 @@ defmodule Alpa.Options.Contracts do
         :page_token
       ])
       |> Enum.map(fn
-        {:underlying_symbols, syms} when is_list(syms) -> {:underlying_symbols, Enum.join(syms, ",")}
-        {:expiration_date, %Date{} = d} -> {:expiration_date, Date.to_string(d)}
-        {:expiration_date_gte, %Date{} = d} -> {:expiration_date_gte, Date.to_string(d)}
-        {:expiration_date_lte, %Date{} = d} -> {:expiration_date_lte, Date.to_string(d)}
-        other -> other
+        {:underlying_symbols, syms} when is_list(syms) ->
+          {:underlying_symbols, Enum.join(syms, ",")}
+
+        {:expiration_date, %Date{} = d} ->
+          {:expiration_date, Date.to_string(d)}
+
+        {:expiration_date_gte, %Date{} = d} ->
+          {:expiration_date_gte, Date.to_string(d)}
+
+        {:expiration_date_lte, %Date{} = d} ->
+          {:expiration_date_lte, Date.to_string(d)}
+
+        other ->
+          other
       end)
       |> Enum.reject(fn {_, v} -> is_nil(v) end)
       |> Map.new()

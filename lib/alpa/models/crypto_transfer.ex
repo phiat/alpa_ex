@@ -6,19 +6,19 @@ defmodule Alpa.Models.CryptoTransfer do
   import Alpa.Helpers, only: [parse_decimal: 1, parse_datetime: 1]
 
   typedstruct do
-    field :id, String.t()
-    field :tx_hash, String.t()
-    field :direction, String.t()
-    field :status, String.t()
-    field :amount, Decimal.t()
-    field :symbol, String.t()
-    field :network_fee, Decimal.t()
-    field :fees, Decimal.t()
-    field :chain, String.t()
-    field :from_address, String.t()
-    field :to_address, String.t()
-    field :created_at, DateTime.t()
-    field :updated_at, DateTime.t()
+    field(:id, String.t())
+    field(:tx_hash, String.t())
+    field(:direction, String.t())
+    field(:status, String.t())
+    field(:amount, Decimal.t())
+    field(:symbol, String.t())
+    field(:network_fee, Decimal.t())
+    field(:fees, Decimal.t())
+    field(:chain, String.t())
+    field(:from_address, String.t())
+    field(:to_address, String.t())
+    field(:created_at, DateTime.t())
+    field(:updated_at, DateTime.t())
   end
 
   @spec from_map(map()) :: t()
@@ -39,5 +39,4 @@ defmodule Alpa.Models.CryptoTransfer do
       updated_at: parse_datetime(data["updated_at"])
     }
   end
-
 end

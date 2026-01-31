@@ -55,20 +55,22 @@ defmodule Alpa.Models.WatchlistTest do
     end
 
     test "handles invalid datetime" do
-      watchlist = Watchlist.from_map(%{
-        "created_at" => "not-a-date",
-        "updated_at" => "also-not-a-date"
-      })
+      watchlist =
+        Watchlist.from_map(%{
+          "created_at" => "not-a-date",
+          "updated_at" => "also-not-a-date"
+        })
 
       assert watchlist.created_at == nil
       assert watchlist.updated_at == nil
     end
 
     test "handles empty string datetime" do
-      watchlist = Watchlist.from_map(%{
-        "created_at" => "",
-        "updated_at" => ""
-      })
+      watchlist =
+        Watchlist.from_map(%{
+          "created_at" => "",
+          "updated_at" => ""
+        })
 
       assert watchlist.created_at == nil
       assert watchlist.updated_at == nil

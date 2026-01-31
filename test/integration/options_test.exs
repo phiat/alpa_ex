@@ -13,11 +13,12 @@ defmodule Alpa.Integration.OptionsTest do
   describe "Options Contracts" do
     test "list/1 returns option contracts" do
       # Get AAPL options
-      assert {:ok, result} = Contracts.list(
-        underlying_symbols: ["AAPL"],
-        status: "active",
-        limit: 10
-      )
+      assert {:ok, result} =
+               Contracts.list(
+                 underlying_symbols: ["AAPL"],
+                 status: "active",
+                 limit: 10
+               )
 
       assert is_list(result.contracts)
       IO.puts("  AAPL option contracts: #{length(result.contracts)}")
@@ -32,17 +33,20 @@ defmodule Alpa.Integration.OptionsTest do
 
     test "search/2 searches for specific options" do
       # Search for AAPL calls
-      assert {:ok, result} = Contracts.search("AAPL",
-        type: :call,
-        limit: 5
-      )
+      assert {:ok, result} =
+               Contracts.search("AAPL",
+                 type: :call,
+                 limit: 5
+               )
 
       assert is_list(result.contracts)
       IO.puts("  AAPL call options found: #{length(result.contracts)}")
 
       Enum.take(result.contracts, 3)
       |> Enum.each(fn contract ->
-        IO.puts("    #{contract.symbol}: Strike $#{contract.strike_price}, Exp #{contract.expiration_date}")
+        IO.puts(
+          "    #{contract.symbol}: Strike $#{contract.strike_price}, Exp #{contract.expiration_date}"
+        )
       end)
     end
 

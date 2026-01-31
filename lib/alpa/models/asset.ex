@@ -9,21 +9,21 @@ defmodule Alpa.Models.Asset do
   @type asset_class :: :us_equity | :crypto
 
   typedstruct do
-    field :id, String.t()
-    field :class, asset_class()
-    field :exchange, String.t()
-    field :symbol, String.t()
-    field :name, String.t()
-    field :status, status()
-    field :tradable, boolean()
-    field :marginable, boolean()
-    field :maintenance_margin_requirement, Decimal.t()
-    field :shortable, boolean()
-    field :easy_to_borrow, boolean()
-    field :fractionable, boolean()
-    field :min_order_size, Decimal.t()
-    field :min_trade_increment, Decimal.t()
-    field :price_increment, Decimal.t()
+    field(:id, String.t())
+    field(:class, asset_class())
+    field(:exchange, String.t())
+    field(:symbol, String.t())
+    field(:name, String.t())
+    field(:status, status())
+    field(:tradable, boolean())
+    field(:marginable, boolean())
+    field(:maintenance_margin_requirement, Decimal.t())
+    field(:shortable, boolean())
+    field(:easy_to_borrow, boolean())
+    field(:fractionable, boolean())
+    field(:min_order_size, Decimal.t())
+    field(:min_trade_increment, Decimal.t())
+    field(:price_increment, Decimal.t())
   end
 
   @doc """

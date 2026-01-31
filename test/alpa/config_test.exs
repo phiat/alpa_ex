@@ -93,9 +93,17 @@ defmodule Alpa.ConfigTest do
 
       on_exit(fn ->
         # Restore original values
-        if original_key, do: System.put_env("APCA_API_KEY_ID", original_key), else: System.delete_env("APCA_API_KEY_ID")
-        if original_secret, do: System.put_env("APCA_API_SECRET_KEY", original_secret), else: System.delete_env("APCA_API_SECRET_KEY")
-        if original_paper, do: System.put_env("APCA_USE_PAPER", original_paper), else: System.delete_env("APCA_USE_PAPER")
+        if original_key,
+          do: System.put_env("APCA_API_KEY_ID", original_key),
+          else: System.delete_env("APCA_API_KEY_ID")
+
+        if original_secret,
+          do: System.put_env("APCA_API_SECRET_KEY", original_secret),
+          else: System.delete_env("APCA_API_SECRET_KEY")
+
+        if original_paper,
+          do: System.put_env("APCA_USE_PAPER", original_paper),
+          else: System.delete_env("APCA_USE_PAPER")
       end)
 
       :ok

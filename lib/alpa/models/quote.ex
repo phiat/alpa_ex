@@ -6,16 +6,16 @@ defmodule Alpa.Models.Quote do
   import Alpa.Helpers, only: [parse_decimal: 1, parse_datetime: 1]
 
   typedstruct do
-    field :symbol, String.t()
-    field :timestamp, DateTime.t()
-    field :ask_price, Decimal.t()
-    field :ask_size, integer()
-    field :ask_exchange, String.t()
-    field :bid_price, Decimal.t()
-    field :bid_size, integer()
-    field :bid_exchange, String.t()
-    field :conditions, [String.t()]
-    field :tape, String.t()
+    field(:symbol, String.t())
+    field(:timestamp, DateTime.t())
+    field(:ask_price, Decimal.t())
+    field(:ask_size, integer())
+    field(:ask_exchange, String.t())
+    field(:bid_price, Decimal.t())
+    field(:bid_size, integer())
+    field(:bid_exchange, String.t())
+    field(:conditions, [String.t()])
+    field(:tape, String.t())
   end
 
   @doc """
@@ -52,5 +52,4 @@ defmodule Alpa.Models.Quote do
   end
 
   def from_response(data), do: data
-
 end

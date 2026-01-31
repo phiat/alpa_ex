@@ -125,7 +125,15 @@ defmodule Alpa.Trading.Account do
   def get_activities(opts \\ []) do
     params =
       opts
-      |> Keyword.take([:activity_types, :date, :until, :after, :direction, :page_size, :page_token])
+      |> Keyword.take([
+        :activity_types,
+        :date,
+        :until,
+        :after,
+        :direction,
+        :page_size,
+        :page_token
+      ])
       |> Enum.reject(fn {_, v} -> is_nil(v) end)
       |> Enum.map(fn
         {:activity_types, types} when is_list(types) -> {:activity_types, Enum.join(types, ",")}
@@ -163,7 +171,8 @@ defmodule Alpa.Trading.Account do
       {:ok, [%{...}]}
 
   """
-  @spec get_activities_by_type(String.t(), keyword()) :: {:ok, [Activity.t()]} | {:error, Alpa.Error.t()}
+  @spec get_activities_by_type(String.t(), keyword()) ::
+          {:ok, [Activity.t()]} | {:error, Alpa.Error.t()}
   def get_activities_by_type(activity_type, opts \\ []) do
     params =
       opts
@@ -171,7 +180,10 @@ defmodule Alpa.Trading.Account do
       |> Enum.reject(fn {_, v} -> is_nil(v) end)
       |> Map.new()
 
-    case Client.get("/v2/account/activities/#{URI.encode_www_form(activity_type)}", Keyword.put(opts, :params, params)) do
+    case Client.get(
+           "/v2/account/activities/#{URI.encode_www_form(activity_type)}",
+           Keyword.put(opts, :params, params)
+         ) do
       {:ok, data} when is_list(data) -> {:ok, Enum.map(data, &Activity.from_map/1)}
       {:ok, unexpected} -> {:error, Alpa.Error.invalid_response(unexpected)}
       {:error, _} = error -> error
@@ -210,7 +222,15 @@ defmodule Alpa.Trading.Account do
   def get_portfolio_history(opts \\ []) do
     params =
       opts
-      |> Keyword.take([:period, :timeframe, :intraday_reporting, :start, :end, :pnl_reset, :date_end])
+      |> Keyword.take([
+        :period,
+        :timeframe,
+        :intraday_reporting,
+        :start,
+        :end,
+        :pnl_reset,
+        :date_end
+      ])
       |> Enum.reject(fn {_, v} -> is_nil(v) end)
       |> Map.new()
 

@@ -130,10 +130,12 @@ defmodule Alpa.Integration.TradingTest do
       end
 
       # Create
-      assert {:ok, watchlist} = Watchlists.create(
-        name: @test_watchlist_name,
-        symbols: ["AAPL", "MSFT"]
-      )
+      assert {:ok, watchlist} =
+               Watchlists.create(
+                 name: @test_watchlist_name,
+                 symbols: ["AAPL", "MSFT"]
+               )
+
       assert watchlist.name == @test_watchlist_name
       IO.puts("  Created watchlist: #{watchlist.id}")
 
@@ -160,6 +162,7 @@ defmodule Alpa.Integration.TradingTest do
 
       # Update - use PUT semantics (provide all symbols)
       new_name = "#{@test_watchlist_name}_Renamed"
+
       case Watchlists.update(current.id, name: new_name) do
         {:ok, renamed} ->
           assert renamed.name == new_name
@@ -172,6 +175,7 @@ defmodule Alpa.Integration.TradingTest do
           IO.puts("  Update not supported, skipping rename")
           assert {:ok, _} = Watchlists.delete(current.id)
       end
+
       IO.puts("  Deleted watchlist")
     end
   end
@@ -189,14 +193,16 @@ defmodule Alpa.Integration.TradingTest do
 
     test "place and cancel limit order" do
       # Place a limit order far from market price (won't fill)
-      assert {:ok, order} = Orders.place(
-        symbol: "AAPL",
-        qty: 1,
-        side: "buy",
-        type: "limit",
-        limit_price: "1.00",  # Very low, won't fill
-        time_in_force: "day"
-      )
+      assert {:ok, order} =
+               Orders.place(
+                 symbol: "AAPL",
+                 qty: 1,
+                 side: "buy",
+                 type: "limit",
+                 # Very low, won't fill
+                 limit_price: "1.00",
+                 time_in_force: "day"
+               )
 
       assert order.symbol == "AAPL"
       assert order.side == :buy

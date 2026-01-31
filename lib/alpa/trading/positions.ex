@@ -68,7 +68,8 @@ defmodule Alpa.Trading.Positions do
       {:ok, %Alpa.Models.Order{...}}
 
   """
-  @spec close(String.t(), keyword()) :: {:ok, Alpa.Models.Order.t() | :deleted} | {:error, Alpa.Error.t()}
+  @spec close(String.t(), keyword()) ::
+          {:ok, Alpa.Models.Order.t() | :deleted} | {:error, Alpa.Error.t()}
   def close(symbol_or_asset_id, opts \\ []) do
     encoded_symbol = URI.encode_www_form(symbol_or_asset_id)
 

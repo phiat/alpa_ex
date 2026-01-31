@@ -345,7 +345,8 @@ defmodule Alpa.Crypto.MarketData do
       {:ok, %{"snapshots" => ...}}
 
   """
-  @spec get_snapshots(String.t() | [String.t()], keyword()) :: {:ok, map()} | {:error, Alpa.Error.t()}
+  @spec get_snapshots(String.t() | [String.t()], keyword()) ::
+          {:ok, map()} | {:error, Alpa.Error.t()}
   def get_snapshots(symbols, opts \\ []) do
     {loc, opts} = Keyword.pop(opts, :loc, @default_loc)
 
@@ -383,7 +384,8 @@ defmodule Alpa.Crypto.MarketData do
       {:ok, %{"orderbooks" => ...}}
 
   """
-  @spec get_orderbook(String.t() | [String.t()], keyword()) :: {:ok, map()} | {:error, Alpa.Error.t()}
+  @spec get_orderbook(String.t() | [String.t()], keyword()) ::
+          {:ok, map()} | {:error, Alpa.Error.t()}
   def get_orderbook(symbols, opts \\ []) do
     {loc, opts} = Keyword.pop(opts, :loc, @default_loc)
 

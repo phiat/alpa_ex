@@ -171,11 +171,13 @@ defmodule Alpa.Stream.MarketDataTest do
     end
 
     test "returns error without credentials" do
-      result = MarketData.start_link(
-        callback: fn _ -> :ok end,
-        api_key: nil,
-        api_secret: nil
-      )
+      result =
+        MarketData.start_link(
+          callback: fn _ -> :ok end,
+          api_key: nil,
+          api_secret: nil
+        )
+
       assert {:error, :missing_credentials} = result
     end
 

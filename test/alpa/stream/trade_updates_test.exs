@@ -107,11 +107,13 @@ defmodule Alpa.Stream.TradeUpdatesTest do
     end
 
     test "returns error without credentials" do
-      result = TradeUpdates.start_link(
-        callback: fn _ -> :ok end,
-        api_key: nil,
-        api_secret: nil
-      )
+      result =
+        TradeUpdates.start_link(
+          callback: fn _ -> :ok end,
+          api_key: nil,
+          api_secret: nil
+        )
+
       assert {:error, :missing_credentials} = result
     end
   end

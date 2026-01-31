@@ -5,12 +5,12 @@ defmodule Alpa.Models.CryptoWallet do
   use TypedStruct
 
   typedstruct do
-    field :id, String.t()
-    field :asset_id, String.t()
-    field :symbol, String.t()
-    field :status, String.t()
-    field :address, String.t()
-    field :created_at, DateTime.t()
+    field(:id, String.t())
+    field(:asset_id, String.t())
+    field(:symbol, String.t())
+    field(:status, String.t())
+    field(:address, String.t())
+    field(:created_at, DateTime.t())
   end
 
   @spec from_map(map()) :: t()

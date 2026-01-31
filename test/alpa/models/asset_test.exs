@@ -91,13 +91,14 @@ defmodule Alpa.Models.AssetTest do
     end
 
     test "handles boolean fields" do
-      asset = Asset.from_map(%{
-        "tradable" => false,
-        "marginable" => false,
-        "shortable" => false,
-        "easy_to_borrow" => false,
-        "fractionable" => false
-      })
+      asset =
+        Asset.from_map(%{
+          "tradable" => false,
+          "marginable" => false,
+          "shortable" => false,
+          "easy_to_borrow" => false,
+          "fractionable" => false
+        })
 
       assert asset.tradable == false
       assert asset.marginable == false

@@ -6,15 +6,15 @@ defmodule Alpa.Models.Bar do
   import Alpa.Helpers, only: [parse_decimal: 1, parse_datetime: 1]
 
   typedstruct do
-    field :symbol, String.t()
-    field :timestamp, DateTime.t()
-    field :open, Decimal.t()
-    field :high, Decimal.t()
-    field :low, Decimal.t()
-    field :close, Decimal.t()
-    field :volume, integer()
-    field :trade_count, integer()
-    field :vwap, Decimal.t()
+    field(:symbol, String.t())
+    field(:timestamp, DateTime.t())
+    field(:open, Decimal.t())
+    field(:high, Decimal.t())
+    field(:low, Decimal.t())
+    field(:close, Decimal.t())
+    field(:volume, integer())
+    field(:trade_count, integer())
+    field(:vwap, Decimal.t())
   end
 
   @doc """
@@ -52,5 +52,4 @@ defmodule Alpa.Models.Bar do
   end
 
   def from_response(data), do: data
-
 end

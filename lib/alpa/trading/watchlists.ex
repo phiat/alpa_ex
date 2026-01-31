@@ -56,8 +56,11 @@ defmodule Alpa.Trading.Watchlists do
          watchlist when not is_nil(watchlist) <- Enum.find(watchlists, &(&1.name == name)) do
       {:ok, watchlist}
     else
-      {:error, _} = error -> error
-      nil -> {:error, Alpa.Error.from_response(404, %{"message" => "Watchlist '#{name}' not found"})}
+      {:error, _} = error ->
+        error
+
+      nil ->
+        {:error, Alpa.Error.from_response(404, %{"message" => "Watchlist '#{name}' not found"})}
     end
   end
 
@@ -161,7 +164,10 @@ defmodule Alpa.Trading.Watchlists do
   @spec remove_symbol(String.t(), String.t(), keyword()) ::
           {:ok, Watchlist.t() | :deleted} | {:error, Alpa.Error.t()}
   def remove_symbol(watchlist_id, symbol, opts \\ []) do
-    case Client.delete("/v2/watchlists/#{URI.encode_www_form(watchlist_id)}/#{URI.encode_www_form(symbol)}", opts) do
+    case Client.delete(
+           "/v2/watchlists/#{URI.encode_www_form(watchlist_id)}/#{URI.encode_www_form(symbol)}",
+           opts
+         ) do
       {:ok, data} when is_map(data) -> {:ok, Watchlist.from_map(data)}
       {:ok, :deleted} -> {:ok, :deleted}
       {:error, _} = error -> error

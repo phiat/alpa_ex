@@ -288,13 +288,29 @@ defmodule Alpa.Stream.MarketData do
     new_attempts = state.reconnect_attempts + 1
 
     if new_attempts >= state.max_reconnect_attempts do
-      Logger.warning("[MarketData] Max reconnect attempts (#{state.max_reconnect_attempts}) reached, giving up")
-      {:ok, %{state | authenticated: false, connection_status: :disconnected, reconnect_attempts: new_attempts}}
+      Logger.warning(
+        "[MarketData] Max reconnect attempts (#{state.max_reconnect_attempts}) reached, giving up"
+      )
+
+      {:ok,
+       %{
+         state
+         | authenticated: false,
+           connection_status: :disconnected,
+           reconnect_attempts: new_attempts
+       }}
     else
       delay = reconnect_delay(new_attempts)
       Logger.info("[MarketData] Reconnecting in #{delay}ms (attempt #{new_attempts})")
       Process.send_after(self(), :reconnect, delay)
-      {:ok, %{state | authenticated: false, connection_status: :disconnected, reconnect_attempts: new_attempts}}
+
+      {:ok,
+       %{
+         state
+         | authenticated: false,
+           connection_status: :disconnected,
+           reconnect_attempts: new_attempts
+       }}
     end
   end
 
@@ -320,7 +336,14 @@ defmodule Alpa.Stream.MarketData do
     end
 
     redacted_config = %{state.config | api_key: :redacted, api_secret: :redacted}
-    %{state | authenticated: true, connection_status: :connected, reconnect_attempts: 0, config: redacted_config}
+
+    %{
+      state
+      | authenticated: true,
+        connection_status: :connected,
+        reconnect_attempts: 0,
+        config: redacted_config
+    }
   end
 
   defp handle_message(%{"T" => "error", "code" => code, "msg" => msg}, state) do
@@ -329,7 +352,10 @@ defmodule Alpa.Stream.MarketData do
   end
 
   defp handle_message(%{"T" => "subscription"} = msg, state) do
-    Logger.info("[MarketData] Subscription updated: trades=#{length(msg["trades"] || [])}, quotes=#{length(msg["quotes"] || [])}, bars=#{length(msg["bars"] || [])}")
+    Logger.info(
+      "[MarketData] Subscription updated: trades=#{length(msg["trades"] || [])}, quotes=#{length(msg["quotes"] || [])}, bars=#{length(msg["bars"] || [])}"
+    )
+
     state
   end
 
@@ -380,7 +406,9 @@ defmodule Alpa.Stream.MarketData do
         new_count = state.consecutive_callback_errors + 1
 
         if new_count >= 10 do
-          Logger.error("[MarketData] #{new_count} consecutive callback errors, latest: #{inspect(error)}")
+          Logger.error(
+            "[MarketData] #{new_count} consecutive callback errors, latest: #{inspect(error)}"
+          )
         else
           Logger.error("[MarketData] Callback error: #{inspect(error)}")
         end

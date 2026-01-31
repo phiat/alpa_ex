@@ -32,7 +32,10 @@ defmodule Alpa.MarketData.Trades do
     params = build_params(opts)
     encoded_symbol = URI.encode_www_form(symbol)
 
-    case Client.get_data("/v2/stocks/#{encoded_symbol}/trades", Keyword.put(opts, :params, params)) do
+    case Client.get_data(
+           "/v2/stocks/#{encoded_symbol}/trades",
+           Keyword.put(opts, :params, params)
+         ) do
       {:ok, data} -> {:ok, parse_trades(data, symbol)}
       {:error, _} = error -> error
     end
@@ -92,7 +95,10 @@ defmodule Alpa.MarketData.Trades do
 
     encoded_symbol = URI.encode_www_form(symbol)
 
-    case Client.get_data("/v2/stocks/#{encoded_symbol}/trades/latest", Keyword.put(opts, :params, params)) do
+    case Client.get_data(
+           "/v2/stocks/#{encoded_symbol}/trades/latest",
+           Keyword.put(opts, :params, params)
+         ) do
       {:ok, %{"trade" => trade}} -> {:ok, Trade.from_map(trade, symbol)}
       {:ok, unexpected} -> {:error, Alpa.Error.invalid_response(unexpected)}
       {:error, _} = error -> error
@@ -120,7 +126,9 @@ defmodule Alpa.MarketData.Trades do
 
     case Client.get_data("/v2/stocks/trades/latest", Keyword.put(opts, :params, params)) do
       {:ok, %{"trades" => trades}} ->
-        result = Map.new(trades, fn {symbol, trade} -> {symbol, Trade.from_map(trade, symbol)} end)
+        result =
+          Map.new(trades, fn {symbol, trade} -> {symbol, Trade.from_map(trade, symbol)} end)
+
         {:ok, result}
 
       {:ok, unexpected} ->

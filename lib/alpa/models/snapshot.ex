@@ -7,12 +7,12 @@ defmodule Alpa.Models.Snapshot do
   alias Alpa.Models.{Bar, Quote, Trade}
 
   typedstruct do
-    field :symbol, String.t()
-    field :latest_trade, Trade.t()
-    field :latest_quote, Quote.t()
-    field :minute_bar, Bar.t()
-    field :daily_bar, Bar.t()
-    field :prev_daily_bar, Bar.t()
+    field(:symbol, String.t())
+    field(:latest_trade, Trade.t())
+    field(:latest_quote, Quote.t())
+    field(:minute_bar, Bar.t())
+    field(:daily_bar, Bar.t())
+    field(:prev_daily_bar, Bar.t())
   end
 
   @doc """

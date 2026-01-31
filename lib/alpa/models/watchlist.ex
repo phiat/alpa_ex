@@ -7,12 +7,12 @@ defmodule Alpa.Models.Watchlist do
   alias Alpa.Models.Asset
 
   typedstruct do
-    field :id, String.t()
-    field :account_id, String.t()
-    field :name, String.t()
-    field :created_at, DateTime.t()
-    field :updated_at, DateTime.t()
-    field :assets, [Asset.t()]
+    field(:id, String.t())
+    field(:account_id, String.t())
+    field(:name, String.t())
+    field(:created_at, DateTime.t())
+    field(:updated_at, DateTime.t())
+    field(:assets, [Asset.t()])
   end
 
   @doc """

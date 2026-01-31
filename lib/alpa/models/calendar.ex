@@ -5,12 +5,12 @@ defmodule Alpa.Models.Calendar do
   use TypedStruct
 
   typedstruct do
-    field :date, Date.t()
-    field :open, String.t()
-    field :close, String.t()
-    field :session_open, String.t()
-    field :session_close, String.t()
-    field :settlement_date, Date.t()
+    field(:date, Date.t())
+    field(:open, String.t())
+    field(:close, String.t())
+    field(:session_open, String.t())
+    field(:session_close, String.t())
+    field(:settlement_date, Date.t())
   end
 
   @spec from_map(map()) :: t()
@@ -26,6 +26,7 @@ defmodule Alpa.Models.Calendar do
   end
 
   defp parse_date(nil), do: nil
+
   defp parse_date(value) when is_binary(value) do
     case Date.from_iso8601(value) do
       {:ok, date} -> date

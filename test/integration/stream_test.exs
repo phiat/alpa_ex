@@ -16,9 +16,10 @@ defmodule Alpa.Integration.StreamTest do
   describe "TradeUpdates Stream" do
     test "start_link/1 connects to stream" do
       # Start the trade updates stream
-      assert {:ok, pid} = TradeUpdates.start_link(
-        callback: fn event -> IO.inspect(event, label: "TradeUpdate") end
-      )
+      assert {:ok, pid} =
+               TradeUpdates.start_link(
+                 callback: fn event -> IO.inspect(event, label: "TradeUpdate") end
+               )
 
       assert Process.alive?(pid)
       IO.puts("  TradeUpdates stream connected: #{inspect(pid)}")
@@ -40,12 +41,13 @@ defmodule Alpa.Integration.StreamTest do
     test "start_link/1 connects to IEX stream" do
       received = :ets.new(:test_events, [:set, :public])
 
-      assert {:ok, pid} = MarketData.start_link(
-        callback: fn event ->
-          :ets.insert(received, {:event, event})
-        end,
-        feed: "iex"
-      )
+      assert {:ok, pid} =
+               MarketData.start_link(
+                 callback: fn event ->
+                   :ets.insert(received, {:event, event})
+                 end,
+                 feed: "iex"
+               )
 
       assert Process.alive?(pid)
       IO.puts("  MarketData IEX stream connected: #{inspect(pid)}")

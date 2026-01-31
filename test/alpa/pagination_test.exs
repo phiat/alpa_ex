@@ -6,7 +6,8 @@ defmodule Alpa.PaginationTest do
   describe "all/2" do
     test "fetches single page when no next_page_token" do
       fetch_fn = fn _opts ->
-        {:ok, %{"bars" => [%{"t" => "2024-01-01"}, %{"t" => "2024-01-02"}], "next_page_token" => nil}}
+        {:ok,
+         %{"bars" => [%{"t" => "2024-01-01"}, %{"t" => "2024-01-02"}], "next_page_token" => nil}}
       end
 
       assert {:ok, items} = Pagination.all(fetch_fn, data_key: "bars")
@@ -20,7 +21,10 @@ defmodule Alpa.PaginationTest do
 
       fetch_fn = fn opts ->
         call_num = Agent.get_and_update(agent, fn n -> {n, n + 1} end)
-        page_token = get_in(opts, [:params, :page_token]) || get_in(opts, [:params]) |> maybe_get_page_token()
+
+        page_token =
+          get_in(opts, [:params, :page_token]) ||
+            get_in(opts, [:params]) |> maybe_get_page_token()
 
         case call_num do
           0 ->
@@ -128,7 +132,9 @@ defmodule Alpa.PaginationTest do
         end
       end
 
-      assert {:ok, items} = Pagination.all(fetch_fn, data_key: "bars", params: %{timeframe: "1Day"})
+      assert {:ok, items} =
+               Pagination.all(fetch_fn, data_key: "bars", params: %{timeframe: "1Day"})
+
       assert length(items) == 2
 
       Agent.stop(agent)
@@ -180,10 +186,11 @@ defmodule Alpa.PaginationTest do
       fetch_fn = fn _opts ->
         call_num = Agent.get_and_update(agent, fn n -> {n, n + 1} end)
 
-        {:ok, %{
-          "items" => [%{"id" => call_num * 2 + 1}, %{"id" => call_num * 2 + 2}],
-          "next_page_token" => "page_#{call_num + 1}"
-        }}
+        {:ok,
+         %{
+           "items" => [%{"id" => call_num * 2 + 1}, %{"id" => call_num * 2 + 2}],
+           "next_page_token" => "page_#{call_num + 1}"
+         }}
       end
 
       items = Pagination.stream(fetch_fn, data_key: "items") |> Stream.take(3) |> Enum.to_list()

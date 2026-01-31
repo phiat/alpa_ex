@@ -30,17 +30,23 @@ defmodule Alpa.Integration.MarketDataTest do
         assert bar.volume != nil
 
         IO.puts("  AAPL bars retrieved: #{length(bars)}")
-        IO.puts("  Latest: O:#{bar.open} H:#{bar.high} L:#{bar.low} C:#{bar.close} V:#{bar.volume}")
+
+        IO.puts(
+          "  Latest: O:#{bar.open} H:#{bar.high} L:#{bar.low} C:#{bar.close} V:#{bar.volume}"
+        )
       else
         IO.puts("  AAPL bars: 0 (check date range)")
       end
     end
 
     test "get_multi/2 returns bars for multiple symbols" do
-      assert {:ok, bars_map} = Bars.get_multi(["AAPL", "MSFT", "GOOGL"], timeframe: "1Day", limit: 3)
+      assert {:ok, bars_map} =
+               Bars.get_multi(["AAPL", "MSFT", "GOOGL"], timeframe: "1Day", limit: 3)
+
       assert is_map(bars_map)
 
       IO.puts("  Multi-symbol bars:")
+
       Enum.each(bars_map, fn {symbol, bars} ->
         IO.puts("    #{symbol}: #{length(bars)} bars")
       end)
@@ -140,7 +146,10 @@ defmodule Alpa.Integration.MarketDataTest do
 
       IO.puts("  AAPL Snapshot:")
       IO.puts("    Latest Trade: $#{snapshot.latest_trade.price}")
-      IO.puts("    Latest Quote: Bid:$#{snapshot.latest_quote.bid_price} Ask:$#{snapshot.latest_quote.ask_price}")
+
+      IO.puts(
+        "    Latest Quote: Bid:$#{snapshot.latest_quote.bid_price} Ask:$#{snapshot.latest_quote.ask_price}"
+      )
 
       if snapshot.minute_bar do
         IO.puts("    Minute Bar Close: $#{snapshot.minute_bar.close}")
@@ -157,13 +166,16 @@ defmodule Alpa.Integration.MarketDataTest do
       assert map_size(snapshots_map) == 3
 
       IO.puts("  Snapshots retrieved: #{map_size(snapshots_map)}")
+
       Enum.each(snapshots_map, fn {symbol, snapshot} ->
         # Handle both parsed structs and raw maps
-        price = case snapshot do
-          %{latest_trade: %{price: p}} -> p
-          %{"latestTrade" => %{"p" => p}} -> p
-          _ -> "N/A"
-        end
+        price =
+          case snapshot do
+            %{latest_trade: %{price: p}} -> p
+            %{"latestTrade" => %{"p" => p}} -> p
+            _ -> "N/A"
+          end
+
         IO.puts("    #{symbol}: $#{price}")
       end)
     end

@@ -74,7 +74,12 @@ defmodule Alpa.Client do
       metadata = %{method: method, api: api, path: path, url: url}
 
       start_time = System.monotonic_time()
-      :telemetry.execute([:alpa, :request, :start], %{system_time: System.system_time()}, metadata)
+
+      :telemetry.execute(
+        [:alpa, :request, :start],
+        %{system_time: System.system_time()},
+        metadata
+      )
 
       req_opts =
         [
