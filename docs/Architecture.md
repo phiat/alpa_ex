@@ -30,6 +30,7 @@ lib/
 │   ├── options/
 │   │   └── contracts.ex           # Option contract search
 │   ├── crypto/
+│   │   ├── funding.ex             # Crypto wallets and transfers
 │   │   ├── trading.ex             # Crypto-specific trading helpers
 │   │   └── market_data.ex         # Crypto bars, quotes, trades, snapshots, orderbook
 │   └── models/
@@ -107,5 +108,12 @@ Alpa.Pagination.stream(&Alpa.Trading.Orders.list/1, limit: 50)
 - Authenticated WebSocket connections
 - Auto-subscribe after auth
 - Callback-based event handling (function or MFA tuple)
-- Exponential backoff reconnection with jitter (1s → 60s max)
+- Exponential backoff reconnection with jitter (1s to 60s max)
 - Connection state tracking (`:connecting`, `:connected`, `:disconnected`)
+
+## See Also
+
+- [Getting Started](Getting-Started.md) -- Installation and quick start
+- [API Coverage](API-Coverage.md) -- Full endpoint coverage matrix
+- [Trading Strategies](Trading-Strategies.md) -- Example strategies and patterns
+- [Contributing](Contributing.md) -- Development setup and guidelines

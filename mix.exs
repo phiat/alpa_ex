@@ -17,6 +17,7 @@ defmodule Alpa.MixProject do
       docs: docs(),
       name: "AlpaEx",
       source_url: @source_url,
+      homepage_url: @source_url,
       dialyzer: [plt_add_apps: [:mix]],
       test_coverage: [tool: ExCoveralls]
     ]
@@ -53,6 +54,7 @@ defmodule Alpa.MixProject do
     [
       maintainers: ["phiat"],
       licenses: ["MIT"],
+      files: ~w(lib config mix.exs README.md CHANGELOG.md LICENSE),
       links: %{
         "GitHub" => @source_url,
         "Alpaca API Docs" => "https://docs.alpaca.markets"
@@ -63,7 +65,15 @@ defmodule Alpa.MixProject do
   defp docs do
     [
       main: "readme",
-      extras: ["README.md", "CHANGELOG.md"],
+      extras: [
+        "README.md",
+        "CHANGELOG.md",
+        "docs/Getting-Started.md",
+        "docs/Architecture.md",
+        "docs/API-Coverage.md",
+        "docs/Trading-Strategies.md",
+        "docs/Contributing.md"
+      ],
       source_ref: "v#{@version}",
       groups_for_modules: [
         Trading: [
@@ -72,7 +82,8 @@ defmodule Alpa.MixProject do
           Alpa.Trading.Positions,
           Alpa.Trading.Assets,
           Alpa.Trading.Watchlists,
-          Alpa.Trading.Market
+          Alpa.Trading.Market,
+          Alpa.Trading.CorporateActions
         ],
         "Market Data": [
           Alpa.MarketData.Bars,
@@ -84,10 +95,19 @@ defmodule Alpa.MixProject do
           Alpa.Stream.TradeUpdates,
           Alpa.Stream.MarketData
         ],
+        Options: [
+          Alpa.Options.Contracts
+        ],
+        Crypto: [
+          Alpa.Crypto.Trading,
+          Alpa.Crypto.MarketData,
+          Alpa.Crypto.Funding
+        ],
         Core: [
           Alpa.Client,
           Alpa.Config,
-          Alpa.Error
+          Alpa.Error,
+          Alpa.Pagination
         ],
         Models: ~r/Alpa\.Models\./
       ]

@@ -6,7 +6,7 @@ This guide covers common trading patterns using the alpa_ex SDK against the Alpa
 
 ## Setup
 
-```elixir
+```bash
 # Ensure credentials are configured
 export APCA_API_KEY_ID="your-key"
 export APCA_API_SECRET_KEY="your-secret"
