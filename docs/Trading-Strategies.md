@@ -196,15 +196,15 @@ Monitor crypto prices across timeframes.
 defmodule Strategy.CryptoMonitor do
   def scan(symbols \\ ["BTC/USD", "ETH/USD", "SOL/USD"]) do
     # Get snapshots for all symbols at once
-    {:ok, snapshots} = Alpa.Crypto.MarketData.get_snapshots(symbols)
+    {:ok, snapshots} = Alpa.Crypto.MarketData.snapshots(symbols)
 
-    Enum.each(snapshots, fn {symbol, data} ->
-      daily_bar = data["dailyBar"]
-      latest = data["latestTrade"]
+    Enum.each(snapshots, fn {symbol, snapshot} ->
+      daily_bar = snapshot.daily_bar
+      latest = snapshot.latest_trade
 
       if daily_bar && latest do
-        open = Decimal.new(daily_bar["o"])
-        current = Decimal.new(latest["p"])
+        open = daily_bar.open
+        current = latest.price
         change_pct = Decimal.mult(
           Decimal.div(Decimal.sub(current, open), open),
           Decimal.new(100)

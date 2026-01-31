@@ -77,6 +77,8 @@ defmodule Alpa.MixProject do
         "docs/Architecture.md",
         "docs/API-Coverage.md",
         "docs/Trading-Strategies.md",
+        "docs/Trade-Ideas.md",
+        "docs/Trade-Ideas-02.md",
         "docs/Contributing.md"
       ],
       source_ref: "v#{@version}",

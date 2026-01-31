@@ -886,17 +886,17 @@ Before entering a new position, check if it is correlated with existing holdings
 1. **Configuration** -- Set your Alpaca paper trading credentials:
 
 ```elixir
-# In config/config.exs or config/dev.exs
-config :alpa,
-  api_key: System.get_env("ALPACA_API_KEY"),
-  api_secret: System.get_env("ALPACA_API_SECRET"),
-  paper: true  # Uses paper-api.alpaca.markets
+# In config/runtime.exs
+config :alpa_ex,
+  api_key: System.get_env("APCA_API_KEY_ID"),
+  api_secret: System.get_env("APCA_API_SECRET_KEY"),
+  use_paper: true  # Uses paper-api.alpaca.markets
 ```
 
 2. **Environment variables:**
 ```bash
-export ALPACA_API_KEY="your-paper-key"
-export ALPACA_API_SECRET="your-paper-secret"
+export APCA_API_KEY_ID="your-paper-key"
+export APCA_API_SECRET_KEY="your-paper-secret"
 ```
 
 ### Running Strategies
@@ -929,7 +929,7 @@ defmodule Strategy.Scheduler do
 
   def handle_info(:run_scans, state) do
     # Run during market hours only
-    case Alpa.Trading.Market.clock() do
+    case Alpa.Trading.Market.get_clock() do
       {:ok, clock} when clock.is_open ->
         Strategy.PennyMomentum.scan_and_trade()
         Strategy.CommodityMeanReversion.scan_mean_reversion()

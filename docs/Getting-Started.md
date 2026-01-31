@@ -143,4 +143,4 @@ end
 - [Architecture](Architecture.md) -- Understand the module structure and design
 - [API Coverage](API-Coverage.md) -- See all supported endpoints
 - [Trading Strategies](Trading-Strategies.md) -- Example trading patterns
-- [Contributing](Contributing.md) -- Help improve alpa_ex
+- [Contributing](Contributing.md) -- Help improve AlpaEx
