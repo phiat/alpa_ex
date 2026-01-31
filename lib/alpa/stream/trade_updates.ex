@@ -37,6 +37,7 @@ defmodule Alpa.Stream.TradeUpdates do
 
   use WebSockex
   require Logger
+  import Alpa.Helpers, only: [parse_decimal: 1, parse_datetime: 1]
 
   alias Alpa.Config
   alias Alpa.Models.Order
@@ -194,7 +195,7 @@ defmodule Alpa.Stream.TradeUpdates do
 
   @impl WebSockex
   def handle_frame({:ping, _}, state) do
-    {:ok, state}
+    {:reply, {:pong, ""}, state}
   end
 
   @impl WebSockex
@@ -253,7 +254,7 @@ defmodule Alpa.Stream.TradeUpdates do
   defp parse_trade_event(data) do
     %{
       event: data["event"],
-      timestamp: parse_timestamp(data["timestamp"]),
+      timestamp: parse_datetime(data["timestamp"]),
       order: parse_order(data["order"]),
       execution_id: data["execution_id"],
       position_qty: parse_decimal(data["position_qty"]),
@@ -268,17 +269,4 @@ defmodule Alpa.Stream.TradeUpdates do
     Order.from_map(order)
   end
 
-  defp parse_timestamp(nil), do: nil
-
-  defp parse_timestamp(ts) when is_binary(ts) do
-    case DateTime.from_iso8601(ts) do
-      {:ok, dt, _} -> dt
-      _ -> nil
-    end
-  end
-
-  defp parse_decimal(nil), do: nil
-  defp parse_decimal(value) when is_binary(value), do: Decimal.new(value)
-  defp parse_decimal(value) when is_integer(value), do: Decimal.new(value)
-  defp parse_decimal(value) when is_float(value), do: Decimal.from_float(value)
 end

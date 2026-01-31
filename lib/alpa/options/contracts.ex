@@ -85,7 +85,7 @@ defmodule Alpa.Options.Contracts do
   """
   @spec get(String.t(), keyword()) :: {:ok, OptionContract.t()} | {:error, Alpa.Error.t()}
   def get(symbol_or_id, opts \\ []) do
-    case Client.get("/v2/options/contracts/#{symbol_or_id}", opts) do
+    case Client.get("/v2/options/contracts/#{URI.encode_www_form(symbol_or_id)}", opts) do
       {:ok, data} -> {:ok, OptionContract.from_map(data)}
       {:error, _} = error -> error
     end

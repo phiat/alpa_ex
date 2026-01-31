@@ -3,6 +3,7 @@ defmodule Alpa.Models.Asset do
   Asset information model.
   """
   use TypedStruct
+  import Alpa.Helpers, only: [parse_decimal: 1]
 
   @type status :: :active | :inactive
   @type asset_class :: :us_equity | :crypto
@@ -48,11 +49,6 @@ defmodule Alpa.Models.Asset do
       price_increment: parse_decimal(data["price_increment"])
     }
   end
-
-  defp parse_decimal(nil), do: nil
-  defp parse_decimal(value) when is_binary(value), do: Decimal.new(value)
-  defp parse_decimal(value) when is_integer(value), do: Decimal.new(value)
-  defp parse_decimal(value) when is_float(value), do: Decimal.from_float(value)
 
   defp parse_class("us_equity"), do: :us_equity
   defp parse_class("crypto"), do: :crypto

@@ -95,6 +95,7 @@ defmodule Alpa.MarketData.Bars do
 
     case Client.get_data("/v2/stocks/#{encoded_symbol}/bars/latest", Keyword.put(opts, :params, params)) do
       {:ok, %{"bar" => bar}} -> {:ok, Bar.from_map(bar, symbol)}
+      {:ok, unexpected} -> {:error, Alpa.Error.invalid_response(unexpected)}
       {:error, _} = error -> error
     end
   end
@@ -121,6 +122,9 @@ defmodule Alpa.MarketData.Bars do
       {:ok, %{"bars" => bars}} ->
         result = Map.new(bars, fn {symbol, bar} -> {symbol, Bar.from_map(bar, symbol)} end)
         {:ok, result}
+
+      {:ok, unexpected} ->
+        {:error, Alpa.Error.invalid_response(unexpected)}
 
       {:error, _} = error ->
         error

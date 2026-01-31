@@ -3,6 +3,7 @@ defmodule Alpa.Models.Account do
   Account information model.
   """
   use TypedStruct
+  import Alpa.Helpers, only: [parse_decimal: 1, parse_datetime: 1]
 
   typedstruct do
     field :id, String.t()
@@ -86,17 +87,4 @@ defmodule Alpa.Models.Account do
     }
   end
 
-  defp parse_decimal(nil), do: nil
-  defp parse_decimal(value) when is_binary(value), do: Decimal.new(value)
-  defp parse_decimal(value) when is_integer(value), do: Decimal.new(value)
-  defp parse_decimal(value) when is_float(value), do: Decimal.from_float(value)
-
-  defp parse_datetime(nil), do: nil
-
-  defp parse_datetime(value) when is_binary(value) do
-    case DateTime.from_iso8601(value) do
-      {:ok, dt, _offset} -> dt
-      _ -> nil
-    end
-  end
 end

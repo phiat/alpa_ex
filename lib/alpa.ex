@@ -61,7 +61,7 @@ defmodule Alpa do
   alias Alpa.Crypto.MarketData, as: CryptoMarketData
   alias Alpa.Crypto.Trading, as: CryptoTrading
   alias Alpa.MarketData.{Bars, Quotes, Snapshots, Trades}
-  alias Alpa.Options.Contracts
+  alias Alpa.Options.Contracts, as: OptionsContracts
   alias Alpa.Trading.{Account, Assets, CorporateActions, Market, Orders, Positions, Watchlists}
 
   # ============================================================================
@@ -447,14 +447,14 @@ defmodule Alpa do
 
   See `Alpa.Crypto.Trading.buy/3` for details.
   """
-  defdelegate crypto_buy(symbol, qty, opts \\ []), to: CryptoTrading, as: :buy
+  def crypto_buy(symbol, qty, opts \\ []), do: CryptoTrading.buy(symbol, qty, opts)
 
   @doc """
   Sell crypto with a market order.
 
   See `Alpa.Crypto.Trading.sell/3` for details.
   """
-  defdelegate crypto_sell(symbol, qty, opts \\ []), to: CryptoTrading, as: :sell
+  def crypto_sell(symbol, qty, opts \\ []), do: CryptoTrading.sell(symbol, qty, opts)
 
   @doc """
   Get all crypto positions.
@@ -464,7 +464,7 @@ defmodule Alpa do
   defdelegate crypto_positions(opts \\ []), to: CryptoTrading, as: :positions
 
   # ============================================================================
-  # Options
+  # Options Contracts
   # ============================================================================
 
   @doc """
@@ -472,19 +472,110 @@ defmodule Alpa do
 
   See `Alpa.Options.Contracts.list/1` for details.
   """
-  defdelegate option_contracts(opts \\ []), to: Contracts, as: :list
+  def option_contracts(opts \\ []), do: OptionsContracts.list(opts)
 
   @doc """
   Get a specific option contract by symbol or ID.
 
   See `Alpa.Options.Contracts.get/2` for details.
   """
-  defdelegate option_contract(symbol_or_id, opts \\ []), to: Contracts, as: :get
+  def option_contract(symbol_or_id, opts \\ []), do: OptionsContracts.get(symbol_or_id, opts)
 
   @doc """
   Search for option contracts by underlying symbol.
 
   See `Alpa.Options.Contracts.search/2` for details.
   """
-  defdelegate option_search(underlying_symbol, opts \\ []), to: Contracts, as: :search
+  defdelegate option_search(underlying_symbol, opts \\ []), to: OptionsContracts, as: :search
+
+  # ============================================================================
+  # Account (additional)
+  # ============================================================================
+
+  @doc """
+  Update account configurations.
+
+  See `Alpa.Trading.Account.update_configurations/1` for details.
+  """
+  defdelegate update_configurations(settings), to: Account, as: :update_configurations
+
+  @doc """
+  Get account activities.
+
+  See `Alpa.Trading.Account.get_activities/1` for details.
+  """
+  def get_activities(opts \\ []), do: Account.get_activities(opts)
+
+  @doc """
+  Get account activities for a specific activity type.
+
+  See `Alpa.Trading.Account.get_activities_by_type/2` for details.
+  """
+  def get_activities_by_type(activity_type, opts \\ []),
+    do: Account.get_activities_by_type(activity_type, opts)
+
+  # ============================================================================
+  # Orders (additional)
+  # ============================================================================
+
+  @doc """
+  Get an order by client order ID.
+
+  See `Alpa.Trading.Orders.get_by_client_id/2` for details.
+  """
+  def get_order_by_client_id(client_order_id, opts \\ []),
+    do: Orders.get_by_client_id(client_order_id, opts)
+
+  @doc """
+  Replace (modify) an existing order.
+
+  See `Alpa.Trading.Orders.replace/2` for details.
+  """
+  defdelegate replace_order(order_id, params), to: Orders, as: :replace
+
+  # ============================================================================
+  # Multi-symbol Market Data
+  # ============================================================================
+
+  @doc """
+  Get historical bars for multiple symbols.
+
+  See `Alpa.MarketData.Bars.get_multi/2` for details.
+  """
+  def bars_multi(symbols, opts \\ []), do: Bars.get_multi(symbols, opts)
+
+  @doc """
+  Get historical quotes for multiple symbols.
+
+  See `Alpa.MarketData.Quotes.get_multi/2` for details.
+  """
+  def quotes_multi(symbols, opts \\ []), do: Quotes.get_multi(symbols, opts)
+
+  @doc """
+  Get historical trades for multiple symbols.
+
+  See `Alpa.MarketData.Trades.get_multi/2` for details.
+  """
+  def trades_multi(symbols, opts \\ []), do: Trades.get_multi(symbols, opts)
+
+  @doc """
+  Get latest bars for multiple symbols.
+
+  See `Alpa.MarketData.Bars.latest_multi/2` for details.
+  """
+  def latest_bars_multi(symbols, opts \\ []), do: Bars.latest_multi(symbols, opts)
+
+  @doc """
+  Get latest quotes for multiple symbols.
+
+  See `Alpa.MarketData.Quotes.latest_multi/2` for details.
+  """
+  def latest_quotes_multi(symbols, opts \\ []), do: Quotes.latest_multi(symbols, opts)
+
+  @doc """
+  Get latest trades for multiple symbols.
+
+  See `Alpa.MarketData.Trades.latest_multi/2` for details.
+  """
+  def latest_trades_multi(symbols, opts \\ []), do: Trades.latest_multi(symbols, opts)
 end

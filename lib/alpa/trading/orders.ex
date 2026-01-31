@@ -135,7 +135,7 @@ defmodule Alpa.Trading.Orders do
   """
   @spec get(String.t(), keyword()) :: {:ok, Order.t()} | {:error, Alpa.Error.t()}
   def get(order_id, opts \\ []) do
-    case Client.get("/v2/orders/#{order_id}", opts) do
+    case Client.get("/v2/orders/#{URI.encode_www_form(order_id)}", opts) do
       {:ok, data} -> {:ok, Order.from_map(data)}
       {:error, _} = error -> error
     end
@@ -185,7 +185,7 @@ defmodule Alpa.Trading.Orders do
       |> Keyword.take([:qty, :time_in_force, :limit_price, :stop_price, :trail, :client_order_id])
       |> Map.new()
 
-    case Client.patch("/v2/orders/#{order_id}", body, params) do
+    case Client.patch("/v2/orders/#{URI.encode_www_form(order_id)}", body, params) do
       {:ok, data} -> {:ok, Order.from_map(data)}
       {:error, _} = error -> error
     end
@@ -202,7 +202,7 @@ defmodule Alpa.Trading.Orders do
   """
   @spec cancel(String.t(), keyword()) :: {:ok, :deleted} | {:error, Alpa.Error.t()}
   def cancel(order_id, opts \\ []) do
-    Client.delete("/v2/orders/#{order_id}", opts)
+    Client.delete("/v2/orders/#{URI.encode_www_form(order_id)}", opts)
   end
 
   @doc """

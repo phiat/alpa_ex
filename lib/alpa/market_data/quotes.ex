@@ -94,6 +94,7 @@ defmodule Alpa.MarketData.Quotes do
 
     case Client.get_data("/v2/stocks/#{encoded_symbol}/quotes/latest", Keyword.put(opts, :params, params)) do
       {:ok, %{"quote" => quote}} -> {:ok, Quote.from_map(quote, symbol)}
+      {:ok, unexpected} -> {:error, Alpa.Error.invalid_response(unexpected)}
       {:error, _} = error -> error
     end
   end
@@ -121,6 +122,9 @@ defmodule Alpa.MarketData.Quotes do
       {:ok, %{"quotes" => quotes}} ->
         result = Map.new(quotes, fn {symbol, quote} -> {symbol, Quote.from_map(quote, symbol)} end)
         {:ok, result}
+
+      {:ok, unexpected} ->
+        {:error, Alpa.Error.invalid_response(unexpected)}
 
       {:error, _} = error ->
         error

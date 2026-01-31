@@ -35,7 +35,7 @@ defmodule Alpa.Trading.Watchlists do
   """
   @spec get(String.t(), keyword()) :: {:ok, Watchlist.t()} | {:error, Alpa.Error.t()}
   def get(watchlist_id, opts \\ []) do
-    case Client.get("/v2/watchlists/#{watchlist_id}", opts) do
+    case Client.get("/v2/watchlists/#{URI.encode_www_form(watchlist_id)}", opts) do
       {:ok, data} -> {:ok, Watchlist.from_map(data)}
       {:error, _} = error -> error
     end
@@ -109,7 +109,7 @@ defmodule Alpa.Trading.Watchlists do
       |> Keyword.take([:name, :symbols])
       |> Map.new()
 
-    case Client.put("/v2/watchlists/#{watchlist_id}", body, params) do
+    case Client.put("/v2/watchlists/#{URI.encode_www_form(watchlist_id)}", body, params) do
       {:ok, data} -> {:ok, Watchlist.from_map(data)}
       {:error, _} = error -> error
     end
@@ -126,7 +126,7 @@ defmodule Alpa.Trading.Watchlists do
   """
   @spec delete(String.t(), keyword()) :: {:ok, :deleted} | {:error, Alpa.Error.t()}
   def delete(watchlist_id, opts \\ []) do
-    Client.delete("/v2/watchlists/#{watchlist_id}", opts)
+    Client.delete("/v2/watchlists/#{URI.encode_www_form(watchlist_id)}", opts)
   end
 
   @doc """
@@ -143,7 +143,7 @@ defmodule Alpa.Trading.Watchlists do
   def add_symbol(watchlist_id, symbol, opts \\ []) do
     body = %{symbol: symbol}
 
-    case Client.post("/v2/watchlists/#{watchlist_id}", body, opts) do
+    case Client.post("/v2/watchlists/#{URI.encode_www_form(watchlist_id)}", body, opts) do
       {:ok, data} -> {:ok, Watchlist.from_map(data)}
       {:error, _} = error -> error
     end
@@ -159,9 +159,9 @@ defmodule Alpa.Trading.Watchlists do
 
   """
   @spec remove_symbol(String.t(), String.t(), keyword()) ::
-          {:ok, Watchlist.t()} | {:error, Alpa.Error.t()}
+          {:ok, Watchlist.t() | :deleted} | {:error, Alpa.Error.t()}
   def remove_symbol(watchlist_id, symbol, opts \\ []) do
-    case Client.delete("/v2/watchlists/#{watchlist_id}/#{symbol}", opts) do
+    case Client.delete("/v2/watchlists/#{URI.encode_www_form(watchlist_id)}/#{URI.encode_www_form(symbol)}", opts) do
       {:ok, data} when is_map(data) -> {:ok, Watchlist.from_map(data)}
       {:ok, :deleted} -> {:ok, :deleted}
       {:error, _} = error -> error

@@ -3,6 +3,7 @@ defmodule Alpa.Models.Order do
   Order model for trading operations.
   """
   use TypedStruct
+  import Alpa.Helpers, only: [parse_decimal: 1, parse_datetime: 1]
 
   @type side :: :buy | :sell
   @type order_type :: :market | :limit | :stop | :stop_limit | :trailing_stop
@@ -101,20 +102,6 @@ defmodule Alpa.Models.Order do
       extended_hours: data["extended_hours"],
       legs: parse_legs(data["legs"])
     }
-  end
-
-  defp parse_decimal(nil), do: nil
-  defp parse_decimal(value) when is_binary(value), do: Decimal.new(value)
-  defp parse_decimal(value) when is_integer(value), do: Decimal.new(value)
-  defp parse_decimal(value) when is_float(value), do: Decimal.from_float(value)
-
-  defp parse_datetime(nil), do: nil
-
-  defp parse_datetime(value) when is_binary(value) do
-    case DateTime.from_iso8601(value) do
-      {:ok, dt, _offset} -> dt
-      _ -> nil
-    end
   end
 
   defp parse_side("buy"), do: :buy

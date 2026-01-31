@@ -94,7 +94,10 @@ defmodule Alpa.Trading.Account do
       ])
       |> Map.new(fn {k, v} -> {to_string(k), v} end)
 
-    Client.patch("/v2/account/configurations", body, settings)
+    case Client.patch("/v2/account/configurations", body, settings) do
+      {:ok, data} -> {:ok, AccountConfig.from_map(data)}
+      {:error, _} = error -> error
+    end
   end
 
   @doc """
@@ -132,6 +135,7 @@ defmodule Alpa.Trading.Account do
 
     case Client.get("/v2/account/activities", Keyword.put(opts, :params, params)) do
       {:ok, data} when is_list(data) -> {:ok, Enum.map(data, &Activity.from_map/1)}
+      {:ok, unexpected} -> {:error, Alpa.Error.invalid_response(unexpected)}
       {:error, _} = error -> error
     end
   end
@@ -167,8 +171,9 @@ defmodule Alpa.Trading.Account do
       |> Enum.reject(fn {_, v} -> is_nil(v) end)
       |> Map.new()
 
-    case Client.get("/v2/account/activities/#{activity_type}", Keyword.put(opts, :params, params)) do
+    case Client.get("/v2/account/activities/#{URI.encode_www_form(activity_type)}", Keyword.put(opts, :params, params)) do
       {:ok, data} when is_list(data) -> {:ok, Enum.map(data, &Activity.from_map/1)}
+      {:ok, unexpected} -> {:error, Alpa.Error.invalid_response(unexpected)}
       {:error, _} = error -> error
     end
   end

@@ -35,6 +35,7 @@ defmodule Alpa.Crypto.Trading do
 
     case Client.get("/v2/assets", Keyword.put(opts, :params, params)) do
       {:ok, data} when is_list(data) -> {:ok, Enum.map(data, &Asset.from_map/1)}
+      {:ok, unexpected} -> {:error, Alpa.Error.invalid_response(unexpected)}
       {:error, _} = error -> error
     end
   end

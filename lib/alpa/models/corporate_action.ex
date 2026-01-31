@@ -3,6 +3,7 @@ defmodule Alpa.Models.CorporateAction do
   Corporate action announcement model.
   """
   use TypedStruct
+  import Alpa.Helpers, only: [parse_decimal: 1, parse_date: 1]
 
   typedstruct do
     field :id, String.t()
@@ -43,16 +44,4 @@ defmodule Alpa.Models.CorporateAction do
     }
   end
 
-  defp parse_date(nil), do: nil
-  defp parse_date(value) when is_binary(value) do
-    case Date.from_iso8601(value) do
-      {:ok, date} -> date
-      _ -> nil
-    end
-  end
-
-  defp parse_decimal(nil), do: nil
-  defp parse_decimal(value) when is_binary(value), do: Decimal.new(value)
-  defp parse_decimal(value) when is_integer(value), do: Decimal.new(value)
-  defp parse_decimal(value) when is_float(value), do: Decimal.from_float(value)
 end

@@ -3,6 +3,7 @@ defmodule Alpa.Models.Position do
   Position model for portfolio holdings.
   """
   use TypedStruct
+  import Alpa.Helpers, only: [parse_decimal: 1]
 
   @type side :: :long | :short
 
@@ -53,11 +54,6 @@ defmodule Alpa.Models.Position do
       qty_available: parse_decimal(data["qty_available"])
     }
   end
-
-  defp parse_decimal(nil), do: nil
-  defp parse_decimal(value) when is_binary(value), do: Decimal.new(value)
-  defp parse_decimal(value) when is_integer(value), do: Decimal.new(value)
-  defp parse_decimal(value) when is_float(value), do: Decimal.from_float(value)
 
   defp parse_side("long"), do: :long
   defp parse_side("short"), do: :short
