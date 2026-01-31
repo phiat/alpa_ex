@@ -71,6 +71,10 @@ defmodule Alpa.Client do
     if Config.has_credentials?(config) do
       base_url = get_base_url(api, config)
       url = base_url <> path
+      metadata = %{method: method, api: api, path: path, url: url}
+
+      start_time = System.monotonic_time()
+      :telemetry.execute([:alpa, :request, :start], %{system_time: System.system_time()}, metadata)
 
       req_opts =
         [
@@ -85,25 +89,42 @@ defmodule Alpa.Client do
         |> maybe_add_body(body)
         |> maybe_add_params(opts)
 
-      case Req.request(req_opts) do
-        {:ok, %Req.Response{status: status, body: body}} when status in 200..299 ->
-          {:ok, body}
+      result =
+        case Req.request(req_opts) do
+          {:ok, %Req.Response{status: status, body: body}} when status in 200..299 ->
+            {:ok, body}
 
-        {:ok, %Req.Response{status: 204}} ->
-          {:ok, :deleted}
+          {:ok, %Req.Response{status: 204}} ->
+            {:ok, :deleted}
 
-        {:ok, %Req.Response{status: status, body: body}} ->
-          {:error, Error.from_response(status, body)}
+          {:ok, %Req.Response{status: status, body: body}} ->
+            {:error, Error.from_response(status, body)}
 
-        {:error, %Req.TransportError{reason: :timeout}} ->
-          {:error, Error.timeout_error()}
+          {:error, %Req.TransportError{reason: :timeout}} ->
+            {:error, Error.timeout_error()}
 
-        {:error, %Req.TransportError{reason: reason}} ->
-          {:error, Error.network_error(reason)}
+          {:error, %Req.TransportError{reason: reason}} ->
+            {:error, Error.network_error(reason)}
 
-        {:error, exception} ->
-          {:error, Error.network_error(exception)}
+          {:error, exception} ->
+            {:error, Error.network_error(exception)}
+        end
+
+      duration = System.monotonic_time() - start_time
+
+      case result do
+        {:ok, _} ->
+          :telemetry.execute([:alpa, :request, :stop], %{duration: duration}, metadata)
+
+        {:error, error} ->
+          :telemetry.execute(
+            [:alpa, :request, :exception],
+            %{duration: duration},
+            Map.put(metadata, :error, error)
+          )
       end
+
+      result
     else
       {:error, Error.missing_credentials()}
     end
