@@ -79,22 +79,26 @@ defmodule Alpa.Trading.Account do
 
   """
   @spec update_configurations(keyword()) :: {:ok, map()} | {:error, Alpa.Error.t()}
+  @config_fields [
+    :dtbp_check,
+    :trade_confirm_email,
+    :suspend_trade,
+    :no_shorting,
+    :fractional_trading,
+    :max_margin_multiplier,
+    :pdt_check,
+    :ptp_no_exception_entry
+  ]
+
   def update_configurations(settings) when is_list(settings) do
     body =
       settings
-      |> Keyword.take([
-        :dtbp_check,
-        :trade_confirm_email,
-        :suspend_trade,
-        :no_shorting,
-        :fractional_trading,
-        :max_margin_multiplier,
-        :pdt_check,
-        :ptp_no_exception_entry
-      ])
+      |> Keyword.take(@config_fields)
       |> Map.new(fn {k, v} -> {to_string(k), v} end)
 
-    case Client.patch("/v2/account/configurations", body, settings) do
+    opts = Keyword.drop(settings, @config_fields)
+
+    case Client.patch("/v2/account/configurations", body, opts) do
       {:ok, data} -> {:ok, AccountConfig.from_map(data)}
       {:error, _} = error -> error
     end

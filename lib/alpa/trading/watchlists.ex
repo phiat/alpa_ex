@@ -79,13 +79,17 @@ defmodule Alpa.Trading.Watchlists do
 
   """
   @spec create(keyword()) :: {:ok, Watchlist.t()} | {:error, Alpa.Error.t()}
+  @create_fields [:name, :symbols]
+
   def create(params) when is_list(params) do
     body = %{
       name: Keyword.fetch!(params, :name),
       symbols: Keyword.get(params, :symbols, [])
     }
 
-    case Client.post("/v2/watchlists", body, params) do
+    opts = Keyword.drop(params, @create_fields)
+
+    case Client.post("/v2/watchlists", body, opts) do
       {:ok, data} -> {:ok, Watchlist.from_map(data)}
       {:error, _} = error -> error
     end
@@ -106,13 +110,17 @@ defmodule Alpa.Trading.Watchlists do
 
   """
   @spec update(String.t(), keyword()) :: {:ok, Watchlist.t()} | {:error, Alpa.Error.t()}
+  @update_fields [:name, :symbols]
+
   def update(watchlist_id, params) when is_list(params) do
     body =
       params
-      |> Keyword.take([:name, :symbols])
+      |> Keyword.take(@update_fields)
       |> Map.new()
 
-    case Client.put("/v2/watchlists/#{URI.encode_www_form(watchlist_id)}", body, params) do
+    opts = Keyword.drop(params, @update_fields)
+
+    case Client.put("/v2/watchlists/#{URI.encode_www_form(watchlist_id)}", body, opts) do
       {:ok, data} -> {:ok, Watchlist.from_map(data)}
       {:error, _} = error -> error
     end

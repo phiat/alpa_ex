@@ -193,4 +193,202 @@ defmodule Alpa.Crypto.FundingTest do
         )
     end
   end
+
+  describe "list_whitelists/1" do
+    test "requires credentials" do
+      result = Funding.list_whitelists(api_key: nil, api_secret: nil)
+      assert {:error, %Error{type: :missing_credentials}} = result
+    end
+
+    test "returns a list of whitelisted addresses" do
+      whitelist_data = [
+        %{"address" => "bc1qwhitelist123", "asset" => "BTC", "created_at" => "2024-02-01T12:00:00Z"},
+        %{"address" => "0xethwhitelist456", "asset" => "ETH", "created_at" => "2024-02-02T12:00:00Z"}
+      ]
+
+      MockClient.mock_get("/v2/crypto/funding/whitelists", {:ok, whitelist_data})
+
+      {:ok, whitelists} = Funding.list_whitelists(api_key: "test", api_secret: "test")
+
+      assert length(whitelists) == 2
+      assert hd(whitelists)["address"] == "bc1qwhitelist123"
+      assert hd(whitelists)["asset"] == "BTC"
+    end
+
+    test "returns empty list" do
+      MockClient.mock_get("/v2/crypto/funding/whitelists", {:ok, []})
+      {:ok, whitelists} = Funding.list_whitelists(api_key: "test", api_secret: "test")
+      assert whitelists == []
+    end
+
+    test "handles invalid response" do
+      MockClient.mock_get("/v2/crypto/funding/whitelists", {:ok, %{"error" => "bad"}})
+
+      {:error, %Error{type: :invalid_response}} =
+        Funding.list_whitelists(api_key: "test", api_secret: "test")
+    end
+  end
+
+  describe "create_whitelist/1" do
+    test "requires credentials" do
+      result =
+        Funding.create_whitelist(
+          address: "bc1qwhitelist123",
+          asset: "BTC",
+          api_key: nil,
+          api_secret: nil
+        )
+
+      assert {:error, %Error{type: :missing_credentials}} = result
+    end
+
+    test "creates a whitelisted address" do
+      whitelist_entry = %{
+        "address" => "bc1qwhitelist123",
+        "asset" => "BTC",
+        "status" => "active",
+        "created_at" => "2024-02-01T12:00:00Z"
+      }
+
+      MockClient.mock_post("/v2/crypto/funding/whitelists", {:ok, whitelist_entry})
+
+      {:ok, whitelist} =
+        Funding.create_whitelist(
+          address: "bc1qwhitelist123",
+          asset: "BTC",
+          api_key: "test",
+          api_secret: "test"
+        )
+
+      assert is_map(whitelist)
+      assert whitelist["address"] == "bc1qwhitelist123"
+      assert whitelist["asset"] == "BTC"
+      assert whitelist["status"] == "active"
+    end
+
+    test "handles API error" do
+      MockClient.mock_post(
+        "/v2/crypto/funding/whitelists",
+        {:error, Error.from_response(422, %{"message" => "address already whitelisted"})}
+      )
+
+      {:error, %Error{type: :unprocessable_entity}} =
+        Funding.create_whitelist(
+          address: "bc1qwhitelist123",
+          asset: "BTC",
+          api_key: "test",
+          api_secret: "test"
+        )
+    end
+  end
+
+  describe "delete_whitelist/2" do
+    test "requires credentials" do
+      result = Funding.delete_whitelist("bc1qwhitelist123", api_key: nil, api_secret: nil)
+      assert {:error, %Error{type: :missing_credentials}} = result
+    end
+
+    test "deletes a whitelisted address and returns data" do
+      delete_response = %{
+        "address" => "bc1qwhitelist123",
+        "asset" => "BTC",
+        "status" => "deleted"
+      }
+
+      MockClient.mock_delete(
+        "/v2/crypto/funding/whitelists/bc1qwhitelist123",
+        {:ok, delete_response}
+      )
+
+      {:ok, result} =
+        Funding.delete_whitelist("bc1qwhitelist123", api_key: "test", api_secret: "test")
+
+      assert is_map(result)
+      assert result["address"] == "bc1qwhitelist123"
+      assert result["status"] == "deleted"
+    end
+
+    test "returns empty map on :deleted response" do
+      MockClient.mock_delete(
+        "/v2/crypto/funding/whitelists/bc1qwhitelist123",
+        {:ok, :deleted}
+      )
+
+      {:ok, result} =
+        Funding.delete_whitelist("bc1qwhitelist123", api_key: "test", api_secret: "test")
+
+      assert result == %{}
+    end
+
+    test "URL-encodes the address" do
+      MockClient.mock_delete(
+        "/v2/crypto/funding/whitelists/bc1q%2Bspecial%3Daddr",
+        {:ok, :deleted}
+      )
+
+      {:ok, result} =
+        Funding.delete_whitelist("bc1q+special=addr", api_key: "test", api_secret: "test")
+
+      assert result == %{}
+    end
+
+    test "handles not found" do
+      MockClient.mock_delete(
+        "/v2/crypto/funding/whitelists/nonexistent",
+        {:error, Error.from_response(404, %{"message" => "not found"})}
+      )
+
+      {:error, %Error{type: :not_found}} =
+        Funding.delete_whitelist("nonexistent", api_key: "test", api_secret: "test")
+    end
+  end
+
+  describe "estimate_transfer/2" do
+    test "requires credentials" do
+      result = Funding.estimate_transfer("transfer-abc-123", api_key: nil, api_secret: nil)
+      assert {:error, %Error{type: :missing_credentials}} = result
+    end
+
+    test "returns fee estimate for a transfer" do
+      estimate_data = %{
+        "fee" => "0.0001",
+        "total_fee" => "0.0002",
+        "currency" => "BTC",
+        "gas_price" => "50"
+      }
+
+      MockClient.mock_get(
+        "/v2/crypto/funding/transfers/transfer-abc-123/estimate",
+        {:ok, estimate_data}
+      )
+
+      {:ok, estimate} =
+        Funding.estimate_transfer("transfer-abc-123", api_key: "test", api_secret: "test")
+
+      assert is_map(estimate)
+      assert estimate["fee"] == "0.0001"
+      assert estimate["total_fee"] == "0.0002"
+      assert estimate["currency"] == "BTC"
+    end
+
+    test "handles not found" do
+      MockClient.mock_get(
+        "/v2/crypto/funding/transfers/nonexistent/estimate",
+        {:error, Error.from_response(404, %{"message" => "not found"})}
+      )
+
+      {:error, %Error{type: :not_found}} =
+        Funding.estimate_transfer("nonexistent", api_key: "test", api_secret: "test")
+    end
+
+    test "handles API error" do
+      MockClient.mock_get(
+        "/v2/crypto/funding/transfers/transfer-abc-123/estimate",
+        {:error, Error.from_response(500, %{"message" => "internal server error"})}
+      )
+
+      {:error, %Error{}} =
+        Funding.estimate_transfer("transfer-abc-123", api_key: "test", api_secret: "test")
+    end
+  end
 end
