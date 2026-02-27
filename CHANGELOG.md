@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.2] - 2026-02-26
+
+### Fixed
+
+- Fix `parse_decimal/1` crash on malformed strings (use `Decimal.parse` instead of `Decimal.new`)
+- Fix WebSocket credential redaction breaking reconnection in both stream modules
+- Fix order/transfer params leaking into HTTP client opts in `Trading.Orders`, `Crypto.Trading`, `Crypto.Funding`
+- Fix params leak in `Trading.Watchlists.create/1` and `update/2`
+- Fix params leak in `Trading.Account.update_configurations/1`
+- Fix `Config.new` `use_paper` inference to respect explicit opt over URL heuristic
+- Remove duplicated `parse_datetime/1` in Clock and CryptoWallet models (import from Helpers)
+- Fix telemetry test warnings (use module function reference)
+
+### Changed
+
+- Test suite expanded from 420 to 685 tests, overall coverage from 52.8% to 70.6%
+- Added `mock_patch/2` to test MockClient helper
+
 ## [1.0.1] - 2026-01-31
 
 ### Added
@@ -88,34 +106,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Legacy v1 bars endpoint (now uses v2 market data API)
 - Compile-time configuration via `Application.get_env`
 
-## [0.1.6] - 2020-03
+---
 
-- Added orders list and update
-- Added account config
-
-## [0.1.5] - 2020-03
-
-- Added calendar and clock
-- Handle 422 errors
-
-## [0.1.4] - 2020-03
-
-- Added portfolio history
-
-## [0.1.3] - 2020-03
-
-- Added positions and watchlists
-
-## [0.1.2] - 2020-03
-
-- Added market data (bars)
-- Multiple endpoint support
-
-## [0.1.1] - 2020-03
-
-- Hex docs
-
-## [0.1.0] - 2020-03
-
-- Initial release
-- Basic account info, buy, sell, delete orders
+*For pre-1.0 changelog, see the [original alpa package](https://github.com/phiat/alpa).*
