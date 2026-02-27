@@ -43,3 +43,6 @@ erl_crash.dump
 
 # Original cloned repo (reference only)
 /alpa/
+
+# beads
+.beads/
