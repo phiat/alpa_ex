@@ -33,8 +33,7 @@ defmodule Alpa.MixProject do
 
   def application do
     [
-      extra_applications: [:logger],
-      mod: {Alpa.Application, []}
+      extra_applications: [:logger]
     ]
   end
 
@@ -115,8 +114,7 @@ defmodule Alpa.MixProject do
           Alpa.Config,
           Alpa.Error,
           Alpa.Helpers,
-          Alpa.Pagination,
-          Alpa.Resource
+          Alpa.Pagination
         ],
         Models: ~r/Alpa\.Models\./
       ]
@@ -147,8 +145,8 @@ defmodule Alpa.MixProject do
       {:ex_doc, "~> 0.31", only: :dev, runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
-      {:exvcr, "~> 0.15", only: :test},
-      {:excoveralls, "~> 0.18", only: :test}
+      {:excoveralls, "~> 0.18", only: :test},
+      {:meck, "~> 0.9", only: :test}
     ]
   end
 end

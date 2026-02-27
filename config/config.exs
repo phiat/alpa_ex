@@ -16,6 +16,7 @@ config :alpa_ex,
   timeout: 30_000,
   receive_timeout: 30_000
 
-# Import environment specific config. This must remain at the bottom
-# of this file so it overrides the configuration defined above.
-import_config "#{config_env()}.exs"
+# Import test config when running tests
+if config_env() == :test do
+  import_config "test.exs"
+end

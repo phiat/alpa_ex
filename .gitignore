@@ -27,8 +27,10 @@ erl_crash.dump
 .env.*
 !.env.example
 
-# ExVCR cassettes with API responses
-/test/fixture/vcr_cassettes/*secret*
+# Dialyzer PLT files
+/priv/plts/
+*.plt
+*.plt.hash
 
 # IDE
 .idea/
