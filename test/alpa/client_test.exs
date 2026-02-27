@@ -3,6 +3,13 @@ defmodule Alpa.ClientTest do
 
   alias Alpa.{Client, Error}
 
+  defmodule TelemetryForwarder do
+    @moduledoc false
+    def handle_event(event, measurements, metadata, pid) do
+      send(pid, {:telemetry, event, measurements, metadata})
+    end
+  end
+
   describe "request without credentials" do
     test "returns missing credentials error for nil credentials" do
       result = Client.get("/v2/account", api_key: nil, api_secret: nil)
@@ -662,28 +669,22 @@ defmodule Alpa.ClientTest do
       :telemetry.attach(
         "test-start",
         [:alpa, :request, :start],
-        fn event, measurements, metadata, _config ->
-          send(self_pid, {:telemetry, event, measurements, metadata})
-        end,
-        nil
+        &TelemetryForwarder.handle_event/4,
+        self_pid
       )
 
       :telemetry.attach(
         "test-stop",
         [:alpa, :request, :stop],
-        fn event, measurements, metadata, _config ->
-          send(self_pid, {:telemetry, event, measurements, metadata})
-        end,
-        nil
+        &TelemetryForwarder.handle_event/4,
+        self_pid
       )
 
       :telemetry.attach(
         "test-exception",
         [:alpa, :request, :exception],
-        fn event, measurements, metadata, _config ->
-          send(self_pid, {:telemetry, event, measurements, metadata})
-        end,
-        nil
+        &TelemetryForwarder.handle_event/4,
+        self_pid
       )
 
       on_exit(fn ->
