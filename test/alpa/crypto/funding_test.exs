@@ -202,8 +202,16 @@ defmodule Alpa.Crypto.FundingTest do
 
     test "returns a list of whitelisted addresses" do
       whitelist_data = [
-        %{"address" => "bc1qwhitelist123", "asset" => "BTC", "created_at" => "2024-02-01T12:00:00Z"},
-        %{"address" => "0xethwhitelist456", "asset" => "ETH", "created_at" => "2024-02-02T12:00:00Z"}
+        %{
+          "address" => "bc1qwhitelist123",
+          "asset" => "BTC",
+          "created_at" => "2024-02-01T12:00:00Z"
+        },
+        %{
+          "address" => "0xethwhitelist456",
+          "asset" => "ETH",
+          "created_at" => "2024-02-02T12:00:00Z"
+        }
       ]
 
       MockClient.mock_get("/v2/crypto/funding/whitelists", {:ok, whitelist_data})

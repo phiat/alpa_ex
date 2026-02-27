@@ -21,32 +21,36 @@ defmodule Alpa.MarketData.QuotesTest do
     end
 
     test "returns parsed quotes for a symbol" do
-      MockClient.mock_get_data("/v2/stocks/AAPL/quotes", {:ok, %{
-        "quotes" => [
-          %{
-            "t" => "2024-01-15T14:30:00Z",
-            "ap" => "185.50",
-            "as" => 2,
-            "ax" => "Q",
-            "bp" => "185.45",
-            "bs" => 3,
-            "bx" => "K",
-            "c" => ["R"],
-            "z" => "A"
-          },
-          %{
-            "t" => "2024-01-15T14:30:01Z",
-            "ap" => "185.55",
-            "as" => 1,
-            "ax" => "Q",
-            "bp" => "185.48",
-            "bs" => 5,
-            "bx" => "N",
-            "c" => ["R"],
-            "z" => "A"
-          }
-        ]
-      }})
+      MockClient.mock_get_data(
+        "/v2/stocks/AAPL/quotes",
+        {:ok,
+         %{
+           "quotes" => [
+             %{
+               "t" => "2024-01-15T14:30:00Z",
+               "ap" => "185.50",
+               "as" => 2,
+               "ax" => "Q",
+               "bp" => "185.45",
+               "bs" => 3,
+               "bx" => "K",
+               "c" => ["R"],
+               "z" => "A"
+             },
+             %{
+               "t" => "2024-01-15T14:30:01Z",
+               "ap" => "185.55",
+               "as" => 1,
+               "ax" => "Q",
+               "bp" => "185.48",
+               "bs" => 5,
+               "bx" => "N",
+               "c" => ["R"],
+               "z" => "A"
+             }
+           ]
+         }}
+      )
 
       assert {:ok, quotes} = Quotes.get("AAPL")
       assert length(quotes) == 2
@@ -97,21 +101,25 @@ defmodule Alpa.MarketData.QuotesTest do
     end
 
     test "URL-encodes symbols with special characters" do
-      MockClient.mock_get_data("/v2/stocks/BRK%2FB/quotes", {:ok, %{
-        "quotes" => [
-          %{
-            "t" => "2024-01-15T14:30:00Z",
-            "ap" => "400.00",
-            "as" => 1,
-            "ax" => "Q",
-            "bp" => "399.95",
-            "bs" => 1,
-            "bx" => "K",
-            "c" => [],
-            "z" => "A"
-          }
-        ]
-      }})
+      MockClient.mock_get_data(
+        "/v2/stocks/BRK%2FB/quotes",
+        {:ok,
+         %{
+           "quotes" => [
+             %{
+               "t" => "2024-01-15T14:30:00Z",
+               "ap" => "400.00",
+               "as" => 1,
+               "ax" => "Q",
+               "bp" => "399.95",
+               "bs" => 1,
+               "bx" => "K",
+               "c" => [],
+               "z" => "A"
+             }
+           ]
+         }}
+      )
 
       assert {:ok, [%Quote{symbol: "BRK/B"}]} = Quotes.get("BRK/B")
     end
@@ -133,47 +141,51 @@ defmodule Alpa.MarketData.QuotesTest do
     end
 
     test "returns parsed quotes grouped by symbol" do
-      MockClient.mock_get_data("/v2/stocks/quotes", {:ok, %{
-        "quotes" => %{
-          "AAPL" => [
-            %{
-              "t" => "2024-01-15T14:30:00Z",
-              "ap" => "185.50",
-              "as" => 2,
-              "ax" => "Q",
-              "bp" => "185.45",
-              "bs" => 3,
-              "bx" => "K",
-              "c" => ["R"],
-              "z" => "A"
-            }
-          ],
-          "MSFT" => [
-            %{
-              "t" => "2024-01-15T14:30:00Z",
-              "ap" => "380.00",
-              "as" => 4,
-              "ax" => "N",
-              "bp" => "379.95",
-              "bs" => 2,
-              "bx" => "Q",
-              "c" => [],
-              "z" => "B"
-            },
-            %{
-              "t" => "2024-01-15T14:30:01Z",
-              "ap" => "380.10",
-              "as" => 1,
-              "ax" => "N",
-              "bp" => "380.00",
-              "bs" => 3,
-              "bx" => "Q",
-              "c" => [],
-              "z" => "B"
-            }
-          ]
-        }
-      }})
+      MockClient.mock_get_data(
+        "/v2/stocks/quotes",
+        {:ok,
+         %{
+           "quotes" => %{
+             "AAPL" => [
+               %{
+                 "t" => "2024-01-15T14:30:00Z",
+                 "ap" => "185.50",
+                 "as" => 2,
+                 "ax" => "Q",
+                 "bp" => "185.45",
+                 "bs" => 3,
+                 "bx" => "K",
+                 "c" => ["R"],
+                 "z" => "A"
+               }
+             ],
+             "MSFT" => [
+               %{
+                 "t" => "2024-01-15T14:30:00Z",
+                 "ap" => "380.00",
+                 "as" => 4,
+                 "ax" => "N",
+                 "bp" => "379.95",
+                 "bs" => 2,
+                 "bx" => "Q",
+                 "c" => [],
+                 "z" => "B"
+               },
+               %{
+                 "t" => "2024-01-15T14:30:01Z",
+                 "ap" => "380.10",
+                 "as" => 1,
+                 "ax" => "N",
+                 "bp" => "380.00",
+                 "bs" => 3,
+                 "bx" => "Q",
+                 "c" => [],
+                 "z" => "B"
+               }
+             ]
+           }
+         }}
+      )
 
       assert {:ok, result} = Quotes.get_multi(["AAPL", "MSFT"])
       assert is_map(result)
@@ -226,19 +238,23 @@ defmodule Alpa.MarketData.QuotesTest do
     end
 
     test "returns a single parsed quote" do
-      MockClient.mock_get_data("/v2/stocks/AAPL/quotes/latest", {:ok, %{
-        "quote" => %{
-          "t" => "2024-01-15T20:00:00Z",
-          "ap" => "186.00",
-          "as" => 5,
-          "ax" => "V",
-          "bp" => "185.99",
-          "bs" => 10,
-          "bx" => "Q",
-          "c" => ["R"],
-          "z" => "A"
-        }
-      }})
+      MockClient.mock_get_data(
+        "/v2/stocks/AAPL/quotes/latest",
+        {:ok,
+         %{
+           "quote" => %{
+             "t" => "2024-01-15T20:00:00Z",
+             "ap" => "186.00",
+             "as" => 5,
+             "ax" => "V",
+             "bp" => "185.99",
+             "bs" => 10,
+             "bx" => "Q",
+             "c" => ["R"],
+             "z" => "A"
+           }
+         }}
+      )
 
       assert {:ok, %Quote{} = quote} = Quotes.latest("AAPL")
       assert quote.symbol == "AAPL"
@@ -273,37 +289,45 @@ defmodule Alpa.MarketData.QuotesTest do
     end
 
     test "URL-encodes symbols with special characters" do
-      MockClient.mock_get_data("/v2/stocks/BRK%2FB/quotes/latest", {:ok, %{
-        "quote" => %{
-          "t" => "2024-01-15T20:00:00Z",
-          "ap" => "400.00",
-          "as" => 1,
-          "ax" => "Q",
-          "bp" => "399.95",
-          "bs" => 1,
-          "bx" => "K",
-          "c" => [],
-          "z" => "A"
-        }
-      }})
+      MockClient.mock_get_data(
+        "/v2/stocks/BRK%2FB/quotes/latest",
+        {:ok,
+         %{
+           "quote" => %{
+             "t" => "2024-01-15T20:00:00Z",
+             "ap" => "400.00",
+             "as" => 1,
+             "ax" => "Q",
+             "bp" => "399.95",
+             "bs" => 1,
+             "bx" => "K",
+             "c" => [],
+             "z" => "A"
+           }
+         }}
+      )
 
       assert {:ok, %Quote{symbol: "BRK/B"}} = Quotes.latest("BRK/B")
     end
 
     test "handles quote with nil fields gracefully" do
-      MockClient.mock_get_data("/v2/stocks/AAPL/quotes/latest", {:ok, %{
-        "quote" => %{
-          "t" => nil,
-          "ap" => nil,
-          "as" => nil,
-          "ax" => nil,
-          "bp" => nil,
-          "bs" => nil,
-          "bx" => nil,
-          "c" => nil,
-          "z" => nil
-        }
-      }})
+      MockClient.mock_get_data(
+        "/v2/stocks/AAPL/quotes/latest",
+        {:ok,
+         %{
+           "quote" => %{
+             "t" => nil,
+             "ap" => nil,
+             "as" => nil,
+             "ax" => nil,
+             "bp" => nil,
+             "bs" => nil,
+             "bx" => nil,
+             "c" => nil,
+             "z" => nil
+           }
+         }}
+      )
 
       assert {:ok, %Quote{} = quote} = Quotes.latest("AAPL")
       assert quote.symbol == "AAPL"
@@ -326,32 +350,36 @@ defmodule Alpa.MarketData.QuotesTest do
     end
 
     test "returns parsed quotes keyed by symbol" do
-      MockClient.mock_get_data("/v2/stocks/quotes/latest", {:ok, %{
-        "quotes" => %{
-          "AAPL" => %{
-            "t" => "2024-01-15T20:00:00Z",
-            "ap" => "186.00",
-            "as" => 5,
-            "ax" => "V",
-            "bp" => "185.99",
-            "bs" => 10,
-            "bx" => "Q",
-            "c" => ["R"],
-            "z" => "A"
-          },
-          "MSFT" => %{
-            "t" => "2024-01-15T20:00:00Z",
-            "ap" => "380.25",
-            "as" => 3,
-            "ax" => "N",
-            "bp" => "380.20",
-            "bs" => 7,
-            "bx" => "Q",
-            "c" => [],
-            "z" => "B"
-          }
-        }
-      }})
+      MockClient.mock_get_data(
+        "/v2/stocks/quotes/latest",
+        {:ok,
+         %{
+           "quotes" => %{
+             "AAPL" => %{
+               "t" => "2024-01-15T20:00:00Z",
+               "ap" => "186.00",
+               "as" => 5,
+               "ax" => "V",
+               "bp" => "185.99",
+               "bs" => 10,
+               "bx" => "Q",
+               "c" => ["R"],
+               "z" => "A"
+             },
+             "MSFT" => %{
+               "t" => "2024-01-15T20:00:00Z",
+               "ap" => "380.25",
+               "as" => 3,
+               "ax" => "N",
+               "bp" => "380.20",
+               "bs" => 7,
+               "bx" => "Q",
+               "c" => [],
+               "z" => "B"
+             }
+           }
+         }}
+      )
 
       assert {:ok, result} = Quotes.latest_multi(["AAPL", "MSFT"])
       assert is_map(result)
@@ -390,21 +418,25 @@ defmodule Alpa.MarketData.QuotesTest do
     end
 
     test "handles single symbol" do
-      MockClient.mock_get_data("/v2/stocks/quotes/latest", {:ok, %{
-        "quotes" => %{
-          "TSLA" => %{
-            "t" => "2024-01-15T20:00:00Z",
-            "ap" => "250.00",
-            "as" => 2,
-            "ax" => "Q",
-            "bp" => "249.95",
-            "bs" => 4,
-            "bx" => "N",
-            "c" => ["R"],
-            "z" => "C"
-          }
-        }
-      }})
+      MockClient.mock_get_data(
+        "/v2/stocks/quotes/latest",
+        {:ok,
+         %{
+           "quotes" => %{
+             "TSLA" => %{
+               "t" => "2024-01-15T20:00:00Z",
+               "ap" => "250.00",
+               "as" => 2,
+               "ax" => "Q",
+               "bp" => "249.95",
+               "bs" => 4,
+               "bx" => "N",
+               "c" => ["R"],
+               "z" => "C"
+             }
+           }
+         }}
+      )
 
       assert {:ok, result} = Quotes.latest_multi(["TSLA"])
       assert map_size(result) == 1
@@ -412,7 +444,13 @@ defmodule Alpa.MarketData.QuotesTest do
     end
 
     test "passes through network errors" do
-      error = %Error{type: :network_error, message: "Network error: :econnrefused", code: nil, details: nil}
+      error = %Error{
+        type: :network_error,
+        message: "Network error: :econnrefused",
+        code: nil,
+        details: nil
+      }
+
       MockClient.mock_get_data("/v2/stocks/quotes/latest", {:error, error})
 
       assert {:error, %Error{type: :network_error}} = Quotes.latest_multi(["AAPL"])

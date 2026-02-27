@@ -428,7 +428,13 @@ defmodule Alpa.MarketData.BarsTest do
     end
 
     test "propagates error from client" do
-      error = %Error{type: :server_error, message: "Internal server error", code: 500, details: nil}
+      error = %Error{
+        type: :server_error,
+        message: "Internal server error",
+        code: 500,
+        details: nil
+      }
+
       MockClient.mock_get_data("/v2/stocks/bars/latest", {:error, error})
 
       assert {:error, %Error{type: :server_error}} = Bars.latest_multi(["AAPL", "MSFT"])

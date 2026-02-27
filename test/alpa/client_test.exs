@@ -213,7 +213,17 @@ defmodule Alpa.ClientTest do
   describe "successful HTTP responses (mocked Req)" do
     setup do
       :meck.new(Req, [:passthrough])
-      on_exit(fn -> try do :meck.unload(Req) rescue _ -> :ok catch _, _ -> :ok end end)
+
+      on_exit(fn ->
+        try do
+          :meck.unload(Req)
+        rescue
+          _ -> :ok
+        catch
+          _, _ -> :ok
+        end
+      end)
+
       :ok
     end
 
@@ -321,7 +331,17 @@ defmodule Alpa.ClientTest do
   describe "error HTTP responses (mocked Req)" do
     setup do
       :meck.new(Req, [:passthrough])
-      on_exit(fn -> try do :meck.unload(Req) rescue _ -> :ok catch _, _ -> :ok end end)
+
+      on_exit(fn ->
+        try do
+          :meck.unload(Req)
+        rescue
+          _ -> :ok
+        catch
+          _, _ -> :ok
+        end
+      end)
+
       :ok
     end
 
@@ -353,7 +373,10 @@ defmodule Alpa.ClientTest do
     test "422 response returns unprocessable_entity error" do
       :meck.expect(Req, :request, fn _opts ->
         {:ok,
-         %Req.Response{status: 422, body: %{"message" => "Insufficient qty", "code" => 40_310_000}}}
+         %Req.Response{
+           status: 422,
+           body: %{"message" => "Insufficient qty", "code" => 40_310_000}
+         }}
       end)
 
       assert {:error, %Error{type: :unprocessable_entity, code: 40_310_000}} =
@@ -389,7 +412,17 @@ defmodule Alpa.ClientTest do
   describe "transport and network errors (mocked Req)" do
     setup do
       :meck.new(Req, [:passthrough])
-      on_exit(fn -> try do :meck.unload(Req) rescue _ -> :ok catch _, _ -> :ok end end)
+
+      on_exit(fn ->
+        try do
+          :meck.unload(Req)
+        rescue
+          _ -> :ok
+        catch
+          _, _ -> :ok
+        end
+      end)
+
       :ok
     end
 
@@ -437,7 +470,17 @@ defmodule Alpa.ClientTest do
   describe "request construction (mocked Req)" do
     setup do
       :meck.new(Req, [:passthrough])
-      on_exit(fn -> try do :meck.unload(Req) rescue _ -> :ok catch _, _ -> :ok end end)
+
+      on_exit(fn ->
+        try do
+          :meck.unload(Req)
+        rescue
+          _ -> :ok
+        catch
+          _, _ -> :ok
+        end
+      end)
+
       :ok
     end
 
@@ -524,7 +567,17 @@ defmodule Alpa.ClientTest do
   describe "URL routing" do
     setup do
       :meck.new(Req, [:passthrough])
-      on_exit(fn -> try do :meck.unload(Req) rescue _ -> :ok catch _, _ -> :ok end end)
+
+      on_exit(fn ->
+        try do
+          :meck.unload(Req)
+        rescue
+          _ -> :ok
+        catch
+          _, _ -> :ok
+        end
+      end)
+
       :ok
     end
 
@@ -592,7 +645,16 @@ defmodule Alpa.ClientTest do
   describe "telemetry events (mocked Req)" do
     setup do
       :meck.new(Req, [:passthrough])
-      on_exit(fn -> try do :meck.unload(Req) rescue _ -> :ok catch _, _ -> :ok end end)
+
+      on_exit(fn ->
+        try do
+          :meck.unload(Req)
+        rescue
+          _ -> :ok
+        catch
+          _, _ -> :ok
+        end
+      end)
 
       # Attach telemetry handlers that send messages to the test process
       self_pid = self()

@@ -146,7 +146,16 @@ defmodule Alpa.Crypto.Trading do
       {:ok, %Alpa.Models.Order{...}}
 
   """
-  @order_fields [:symbol, :qty, :notional, :side, :type, :time_in_force, :limit_price, :client_order_id]
+  @order_fields [
+    :symbol,
+    :qty,
+    :notional,
+    :side,
+    :type,
+    :time_in_force,
+    :limit_price,
+    :client_order_id
+  ]
 
   @spec place_order(keyword()) :: {:ok, Order.t()} | {:error, Alpa.Error.t()}
   def place_order(params) when is_list(params) do

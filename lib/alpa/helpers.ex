@@ -22,6 +22,7 @@ defmodule Alpa.Helpers do
   """
   @spec parse_decimal(nil | String.t() | integer() | float()) :: Decimal.t() | nil
   def parse_decimal(nil), do: nil
+
   def parse_decimal(value) when is_binary(value) do
     case Decimal.parse(value) do
       {decimal, ""} -> decimal
@@ -29,6 +30,7 @@ defmodule Alpa.Helpers do
       :error -> nil
     end
   end
+
   def parse_decimal(value) when is_integer(value), do: Decimal.new(value)
   def parse_decimal(value) when is_float(value), do: Decimal.from_float(value)
 
