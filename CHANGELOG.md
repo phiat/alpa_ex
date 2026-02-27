@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.3] - 2026-02-26
+
+### Removed
+
+- Remove unused `exvcr` dependency (tests use `:meck` directly)
+- Remove unused `Alpa.Resource` macro module (never adopted by any API module)
+- Remove empty `Alpa.Application` supervisor (no supervised children)
+- Remove empty `config/dev.exs` and `config/prod.exs` stubs
+- Remove dead `Alpa.VCRCase` test helper and ExVCR configuration
+
+### Changed
+
+- Replace `exvcr` with direct `meck ~> 0.9` dependency
+- Compress logo from 1.3MB to 329KB (resized 1024→512px)
+- Add `priv/plts/` and `*.plt` to `.gitignore`
+
 ## [1.0.2] - 2026-02-26
 
 ### Fixed
