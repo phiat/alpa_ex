@@ -25,6 +25,28 @@ defmodule Alpa.ConfigTest do
       assert config.use_paper == false
     end
 
+    test "explicit use_paper: true with custom trading_url preserves use_paper" do
+      config = Config.new(use_paper: true, trading_url: "https://custom.example.com")
+      assert config.use_paper == true
+      assert config.trading_url == "https://custom.example.com"
+    end
+
+    test "explicit use_paper: false with custom trading_url preserves use_paper" do
+      config = Config.new(use_paper: false, trading_url: "https://custom.example.com")
+      assert config.use_paper == false
+      assert config.trading_url == "https://custom.example.com"
+    end
+
+    test "infers use_paper from paper trading_url when use_paper not set" do
+      config = Config.new(trading_url: "https://paper-api.alpaca.markets")
+      assert config.use_paper == true
+    end
+
+    test "infers use_paper false from live trading_url when use_paper not set" do
+      config = Config.new(trading_url: "https://api.alpaca.markets")
+      assert config.use_paper == false
+    end
+
     test "accepts custom timeouts" do
       config = Config.new(timeout: 60_000, receive_timeout: 90_000)
 

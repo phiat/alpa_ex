@@ -57,30 +57,30 @@ defmodule Alpa.Trading.Orders do
       {:ok, %Alpa.Models.Order{...}}
 
   """
+  @order_fields [
+    :symbol,
+    :qty,
+    :notional,
+    :side,
+    :type,
+    :time_in_force,
+    :limit_price,
+    :stop_price,
+    :trail_price,
+    :trail_percent,
+    :extended_hours,
+    :client_order_id,
+    :order_class,
+    :take_profit,
+    :stop_loss
+  ]
+
   @spec place(keyword()) :: {:ok, Order.t()} | {:error, Alpa.Error.t()}
   def place(params) when is_list(params) do
-    body =
-      params
-      |> Keyword.take([
-        :symbol,
-        :qty,
-        :notional,
-        :side,
-        :type,
-        :time_in_force,
-        :limit_price,
-        :stop_price,
-        :trail_price,
-        :trail_percent,
-        :extended_hours,
-        :client_order_id,
-        :order_class,
-        :take_profit,
-        :stop_loss
-      ])
-      |> Map.new()
+    body = params |> Keyword.take(@order_fields) |> Map.new()
+    opts = Keyword.drop(params, @order_fields)
 
-    case Client.post("/v2/orders", body, params) do
+    case Client.post("/v2/orders", body, opts) do
       {:ok, data} -> {:ok, Order.from_map(data)}
       {:error, _} = error -> error
     end
@@ -179,13 +179,13 @@ defmodule Alpa.Trading.Orders do
 
   """
   @spec replace(String.t(), keyword()) :: {:ok, Order.t()} | {:error, Alpa.Error.t()}
-  def replace(order_id, params) when is_list(params) do
-    body =
-      params
-      |> Keyword.take([:qty, :time_in_force, :limit_price, :stop_price, :trail, :client_order_id])
-      |> Map.new()
+  @replace_fields [:qty, :time_in_force, :limit_price, :stop_price, :trail, :client_order_id]
 
-    case Client.patch("/v2/orders/#{URI.encode_www_form(order_id)}", body, params) do
+  def replace(order_id, params) when is_list(params) do
+    body = params |> Keyword.take(@replace_fields) |> Map.new()
+    opts = Keyword.drop(params, @replace_fields)
+
+    case Client.patch("/v2/orders/#{URI.encode_www_form(order_id)}", body, opts) do
       {:ok, data} -> {:ok, Order.from_map(data)}
       {:error, _} = error -> error
     end

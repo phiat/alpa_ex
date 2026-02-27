@@ -185,15 +185,13 @@ defmodule Alpa.Stream.TradeUpdates do
       {:ok, %{"stream" => "authorization", "data" => %{"status" => "authorized"}}} ->
         Logger.info("[TradeUpdates] Authenticated successfully")
         send(self(), :subscribe)
-        redacted_config = %{state.config | api_key: :redacted, api_secret: :redacted}
 
         {:ok,
          %{
            state
            | authenticated: true,
              connection_status: :connected,
-             reconnect_attempts: 0,
-             config: redacted_config
+             reconnect_attempts: 0
          }}
 
       {:ok, %{"stream" => "authorization", "data" => %{"status" => status}}} ->

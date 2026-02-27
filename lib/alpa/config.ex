@@ -65,10 +65,10 @@ defmodule Alpa.Config do
     trading_url = get_trading_url(opts)
 
     use_paper =
-      if Keyword.has_key?(opts, :trading_url) do
-        String.contains?(trading_url, "paper")
-      else
-        get_opt(opts, :use_paper, true)
+      cond do
+        Keyword.has_key?(opts, :use_paper) -> Keyword.get(opts, :use_paper)
+        Keyword.has_key?(opts, :trading_url) -> String.contains?(trading_url, "paper")
+        true -> get_opt(opts, :use_paper, true)
       end
 
     %__MODULE__{

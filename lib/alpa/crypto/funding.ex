@@ -88,13 +88,13 @@ defmodule Alpa.Crypto.Funding do
 
   """
   @spec create_transfer(keyword()) :: {:ok, CryptoTransfer.t()} | {:error, Alpa.Error.t()}
-  def create_transfer(params) when is_list(params) do
-    body =
-      params
-      |> Keyword.take([:amount, :address, :symbol])
-      |> Map.new()
+  @transfer_fields [:amount, :address, :symbol]
 
-    case Client.post("/v2/crypto/funding/transfers", body, params) do
+  def create_transfer(params) when is_list(params) do
+    body = params |> Keyword.take(@transfer_fields) |> Map.new()
+    opts = Keyword.drop(params, @transfer_fields)
+
+    case Client.post("/v2/crypto/funding/transfers", body, opts) do
       {:ok, data} -> {:ok, CryptoTransfer.from_map(data)}
       {:error, _} = error -> error
     end
@@ -133,13 +133,13 @@ defmodule Alpa.Crypto.Funding do
 
   """
   @spec create_whitelist(keyword()) :: {:ok, map()} | {:error, Alpa.Error.t()}
-  def create_whitelist(opts \\ []) do
-    body =
-      opts
-      |> Keyword.take([:address, :asset])
-      |> Map.new()
+  @whitelist_fields [:address, :asset]
 
-    case Client.post("/v2/crypto/funding/whitelists", body, opts) do
+  def create_whitelist(opts \\ []) do
+    body = opts |> Keyword.take(@whitelist_fields) |> Map.new()
+    client_opts = Keyword.drop(opts, @whitelist_fields)
+
+    case Client.post("/v2/crypto/funding/whitelists", body, client_opts) do
       {:ok, data} when is_map(data) -> {:ok, data}
       {:error, _} = error -> error
     end

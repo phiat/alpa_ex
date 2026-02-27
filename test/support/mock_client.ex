@@ -65,6 +65,17 @@ defmodule Alpa.Test.MockClient do
   end
 
   @doc """
+  Stub a PATCH request to return the given response data.
+  """
+  def mock_patch(path, response) do
+    :meck.expect(Alpa.Client, :patch, fn p, _body, _opts ->
+      if p == path,
+        do: response,
+        else: {:error, Alpa.Error.from_response(404, %{"message" => "Unexpected path: #{p}"})}
+    end)
+  end
+
+  @doc """
   Stub a DELETE request to return the given response data.
   """
   def mock_delete(path, response) do

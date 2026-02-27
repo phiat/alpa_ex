@@ -3,6 +3,7 @@ defmodule Alpa.Models.CryptoWallet do
   Crypto wallet model for funding operations.
   """
   use TypedStruct
+  import Alpa.Helpers, only: [parse_datetime: 1]
 
   typedstruct do
     field(:id, String.t())
@@ -23,14 +24,5 @@ defmodule Alpa.Models.CryptoWallet do
       address: data["address"],
       created_at: parse_datetime(data["created_at"])
     }
-  end
-
-  defp parse_datetime(nil), do: nil
-
-  defp parse_datetime(value) when is_binary(value) do
-    case DateTime.from_iso8601(value) do
-      {:ok, dt, _offset} -> dt
-      _ -> nil
-    end
   end
 end

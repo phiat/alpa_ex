@@ -146,23 +146,14 @@ defmodule Alpa.Crypto.Trading do
       {:ok, %Alpa.Models.Order{...}}
 
   """
+  @order_fields [:symbol, :qty, :notional, :side, :type, :time_in_force, :limit_price, :client_order_id]
+
   @spec place_order(keyword()) :: {:ok, Order.t()} | {:error, Alpa.Error.t()}
   def place_order(params) when is_list(params) do
-    body =
-      params
-      |> Keyword.take([
-        :symbol,
-        :qty,
-        :notional,
-        :side,
-        :type,
-        :time_in_force,
-        :limit_price,
-        :client_order_id
-      ])
-      |> Map.new()
+    body = params |> Keyword.take(@order_fields) |> Map.new()
+    opts = Keyword.drop(params, @order_fields)
 
-    case Client.post("/v2/orders", body, params) do
+    case Client.post("/v2/orders", body, opts) do
       {:ok, data} -> {:ok, Order.from_map(data)}
       {:error, _} = error -> error
     end

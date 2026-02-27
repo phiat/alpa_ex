@@ -3,6 +3,7 @@ defmodule Alpa.Models.Clock do
   Market clock information.
   """
   use TypedStruct
+  import Alpa.Helpers, only: [parse_datetime: 1]
 
   typedstruct do
     field(:timestamp, DateTime.t())
@@ -22,14 +23,5 @@ defmodule Alpa.Models.Clock do
       next_open: parse_datetime(data["next_open"]),
       next_close: parse_datetime(data["next_close"])
     }
-  end
-
-  defp parse_datetime(nil), do: nil
-
-  defp parse_datetime(value) when is_binary(value) do
-    case DateTime.from_iso8601(value) do
-      {:ok, dt, _offset} -> dt
-      _ -> nil
-    end
   end
 end

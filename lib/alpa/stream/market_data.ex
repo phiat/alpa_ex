@@ -333,14 +333,11 @@ defmodule Alpa.Stream.MarketData do
       send(self(), :resubscribe)
     end
 
-    redacted_config = %{state.config | api_key: :redacted, api_secret: :redacted}
-
     %{
       state
       | authenticated: true,
         connection_status: :connected,
-        reconnect_attempts: 0,
-        config: redacted_config
+        reconnect_attempts: 0
     }
   end
 
