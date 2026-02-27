@@ -311,7 +311,6 @@ Alpa.Stream.MarketData.stop(pid)
 | `Alpa.Crypto.MarketData` | Crypto bars, quotes, trades, snapshots, order books |
 | `Alpa.Crypto.Funding` | Crypto transfers and wallets |
 | `Alpa.Helpers` | Shared parse helpers (decimal, datetime, date) |
-| `Alpa.Resource` | Macro for generating typed CRUD modules |
 
 ## Error Handling
 
