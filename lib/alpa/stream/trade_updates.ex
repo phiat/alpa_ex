@@ -180,6 +180,9 @@ defmodule Alpa.Stream.TradeUpdates do
   end
 
   @impl WebSockex
+  def handle_frame({:binary, msg}, state), do: handle_frame({:text, msg}, state)
+
+  @impl WebSockex
   def handle_frame({:text, msg}, state) do
     case Jason.decode(msg) do
       {:ok, %{"stream" => "authorization", "data" => %{"status" => "authorized"}}} ->
